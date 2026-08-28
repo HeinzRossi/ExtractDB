@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <ProjectReference Include="..\ExtractDB.Application\ExtractDB.Application.csproj" />
     <ProjectReference Include="..\ExtractDB.Generators.CSharp\ExtractDB.Generators.CSharp.csproj" />
     <ProjectReference Include="..\ExtractDB.Providers\ExtractDB.Providers.csproj" />

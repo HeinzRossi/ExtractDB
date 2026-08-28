@@ -10,5 +10,6 @@
     <Project Path="tests/ExtractDB.Core.Tests/ExtractDB.Core.Tests.csproj" Id="7589cbf6-f42c-4516-9b2f-5c320ebff554" />
     <Project Path="tests/ExtractDB.Generators.CSharp.Tests/ExtractDB.Generators.CSharp.Tests.csproj" Id="3f8da2f6-f205-4cc5-b552-30248b353070" />
     <Project Path="tests/ExtractDB.Providers.IntegrationTests/ExtractDB.Providers.IntegrationTests.csproj" Id="2a5130e5-d4b4-43b6-89ae-c5ac73d4490a" />
+    <Project Path="tests/ExtractDB.Wpf.Tests/ExtractDB.Wpf.Tests.csproj" Id="b6d39d20-d4df-4ec4-94d0-a3a6484504bb" />
   </Folder>
 </Solution>

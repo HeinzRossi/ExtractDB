@@ -2372,17 +2372,19 @@ Scripts exportados preservam o SQL original.
 ### Tasks
 
 ```text
-S9-T01 DI Composition Root
-S9-T02 Connection View
-S9-T03 Test Connection
-S9-T04 Read Metadata
-S9-T05 Progress
-S9-T06 Cancellation
-S9-T07 Object Selection
-S9-T08 Generation Configuration
-S9-T09 Generation
-S9-T10 Results
+S9-T01 DI Composition Root — Concluído C#
+S9-T02 Connection View — Concluído C#
+S9-T03 Test Connection — Concluído C#
+S9-T04 Read Metadata — Concluído C#
+S9-T05 Progress — Concluído C#
+S9-T06 Cancellation — Concluído C#
+S9-T07 Object Selection — Concluído C#
+S9-T08 Generation Configuration — Concluído C#
+S9-T09 Generation — Concluído C#
+S9-T10 Results — Concluído C#
 ```
+
+**Status:** Concluído no C#.
 
 ## 116. Sprint 10 — Delphi VCL Wizard
 

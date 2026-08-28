@@ -765,14 +765,14 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] triggers C#;
 - [x] organização por schema C#.
 
-### Sprint 9 — WPF Wizard
-- MVVM;
-- DI;
-- conexão;
-- leitura;
-- seleção;
-- geração;
-- resultado.
+### Sprint 9 — WPF Wizard — Concluído C#
+- [x] MVVM C#;
+- [x] DI C#;
+- [x] conexão C#;
+- [x] leitura C#;
+- [x] seleção C#;
+- [x] geração C#;
+- [x] resultado C#.
 
 ### Sprint 10 — Delphi VCL Wizard
 - bootstrap;
