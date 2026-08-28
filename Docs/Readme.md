@@ -1,4 +1,4 @@
-# CODEX.md — DaoGenerator Schema Reverse Engineering
+# Readme.md — ExtractDB Schema Reverse Engineering
 
 ## 1. Objetivo
 
@@ -90,31 +90,31 @@ Generators ────→ Core
 Criar:
 
 ```text
-DaoGenerator.sln
+ExtractDB.slnx
 
 src/
-├── DaoGenerator.Core
-├── DaoGenerator.Application
-├── DaoGenerator.Providers
-├── DaoGenerator.Generators.CSharp
-└── DaoGenerator.Wpf
+├── ExtractDB.Core
+├── ExtractDB.Application
+├── ExtractDB.Providers
+├── ExtractDB.Generators.CSharp
+└── ExtractDB.Wpf
 
 tests/
-├── DaoGenerator.Core.Tests
-├── DaoGenerator.Generators.CSharp.Tests
-└── DaoGenerator.Providers.IntegrationTests
+├── ExtractDB.Core.Tests
+├── ExtractDB.Generators.CSharp.Tests
+└── ExtractDB.Providers.IntegrationTests
 ```
 
 ### Dependências permitidas
 
 ```text
-DaoGenerator.Core
+ExtractDB.Core
     ↑
-    ├── DaoGenerator.Application
-    ├── DaoGenerator.Providers
-    └── DaoGenerator.Generators.CSharp
+    ├── ExtractDB.Application
+    ├── ExtractDB.Providers
+    └── ExtractDB.Generators.CSharp
 
-DaoGenerator.Wpf
+ExtractDB.Wpf
     ↓
 Application
 Providers
@@ -2158,34 +2158,38 @@ UI
 
 Criar foundations e contratos.
 
-#### S1-T01 — Estrutura C#
+#### S1-T01 — Estrutura C# — Concluído
 
 **Resultado esperado:** Solution criada com todas as camadas.  
 **Aceite:** Compila sem dependências circulares.  
 **Prioridade:** Alta.
+**Status:** Concluído no C#.
 
-#### S1-T02 — Estrutura Delphi
+#### S1-T02 — Estrutura Delphi — Pendente
 
 **Resultado esperado:** Estrutura por units/pastas criada.  
 **Aceite:** Projeto VCL compila.  
 **Prioridade:** Alta.
+**Status:** Pendente.
 
-#### S1-T03 — Metadata
+#### S1-T03 — Metadata — Parcial
 
 Implementar todos os tipos normalizados.
 
 **Aceite:** C# e Delphi possuem representação conceitualmente equivalente.  
 **Dependência:** S1-T01/S1-T02.  
 **Prioridade:** Alta.
+**Status:** Concluído no C#; pendente no Delphi.
 
-#### S1-T04 — CommonDbType
+#### S1-T04 — CommonDbType — Concluído C#
 
 Implementar enum.
 
 **Aceite:** Tipos previstos nesta documentação representáveis.  
 **Prioridade:** Alta.
+**Status:** Concluído no C#.
 
-#### S1-T05 — Naming
+#### S1-T05 — Naming — Concluído C#
 
 Implementar:
 
@@ -2196,6 +2200,7 @@ Implementar:
 
 **Aceite:** Testes automatizados cobrindo todos os exemplos deste documento.  
 **Prioridade:** Alta.
+**Status:** Concluído no C#.
 
 ## 108. Sprint 2 — Connection Infrastructure
 
@@ -2206,17 +2211,18 @@ Conexão e seleção de provider.
 ### Tasks
 
 ```text
-S2-T01 DatabaseConnectionOptions
-S2-T02 Connection String Builders
-S2-T03 MetadataProviderFactory
-S2-T04 TestConnection
-S2-T05 Default Schema Resolution
-S2-T06 System Object Filtering
+S2-T01 DatabaseConnectionOptions — Concluído C#
+S2-T02 Connection String Builders — Concluído C#
+S2-T03 MetadataProviderFactory — Concluído C#
+S2-T04 TestConnection — Concluído C#
+S2-T05 Default Schema Resolution — Concluído C#
+S2-T06 System Object Filtering — Concluído C#
 ```
 
 ### Aceite
 
 Os três bancos podem ser testados sem dependência de UI.
+**Status:** Concluído no C#.
 
 ## 109. Sprint 3 — PostgreSQL Provider
 

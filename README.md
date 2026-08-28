@@ -1,11 +1,11 @@
-# ReflexoDB
+# ExtractDB
 
-**ReflexoDB** é uma ferramenta de **Schema Reverse Engineering** voltada à leitura de metadados de bancos de dados e geração de Models e scripts de objetos SQL.
+**ExtractDB** é uma ferramenta de **Schema Reverse Engineering** voltada à leitura de metadados de bancos de dados e geração de Models e scripts de objetos SQL.
 
 O projeto é composto por **duas aplicações desktop independentes**:
 
-- **ReflexoDB C#** — .NET 10 + WPF
-- **ReflexoDB Delphi** — Delphi 12 Athens+ + VCL
+- **ExtractDB C#** — .NET 10 + WPF
+- **ExtractDB Delphi** — Delphi 12 Athens+ + VCL
 
 Ambas seguem o mesmo modelo conceitual de metadados, mas possuem implementações nativas e independentes para cada ecossistema.
 
@@ -13,7 +13,7 @@ Ambas seguem o mesmo modelo conceitual de metadados, mas possuem implementaçõe
 
 ## Objetivo
 
-O ReflexoDB conecta-se a um banco existente, lê sua estrutura e gera código-fonte que reflita fielmente o schema encontrado.
+O ExtractDB conecta-se a um banco existente, lê sua estrutura e gera código-fonte que reflita fielmente o schema encontrado.
 
 SGBDs suportados:
 
@@ -129,23 +129,23 @@ File Writer
 ## Estrutura do repositório
 
 ```text
-ReflexoDB/
+ExtractDB/
 ├── README.md
-├── CODEX.md
+├── Readme.md
 ├── docs/
 ├── csharp/
-│   ├── ReflexoDB.sln
+│   ├── ExtractDB.slnx
 │   ├── src/
-│   │   ├── ReflexoDB.Core/
-│   │   ├── ReflexoDB.Application/
-│   │   ├── ReflexoDB.Providers/
-│   │   ├── ReflexoDB.Generators.CSharp/
-│   │   └── ReflexoDB.Wpf/
+│   │   ├── ExtractDB.Core/
+│   │   ├── ExtractDB.Application/
+│   │   ├── ExtractDB.Providers/
+│   │   ├── ExtractDB.Generators.CSharp/
+│   │   └── ExtractDB.Wpf/
 │   └── tests/
 │
 ├── delphi/
-│   ├── ReflexoDB.dproj
-│   ├── ReflexoDB.dpr
+│   ├── ExtractDB.dproj
+│   ├── ExtractDB.dpr
 │   ├── Source/
 │   │   ├── Core/
 │   │   ├── Application/
@@ -408,7 +408,7 @@ property IdPerfil: Integer;
 
 Tabelas sem PK são geradas normalmente.
 
-O ReflexoDB não tenta inferir ou criar uma chave.
+O ExtractDB não tenta inferir ou criar uma chave.
 
 ---
 
@@ -678,20 +678,21 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 
 ## Roadmap
 
-### Sprint 1 — Core
-- estrutura das soluções;
-- modelo normalizado;
-- CommonDbType;
-- naming;
-- testes unitários iniciais.
+### Sprint 1 — Core — Parcial
+- [x] estrutura C# da solução;
+- [ ] estrutura Delphi da solução;
+- [x] modelo normalizado C#;
+- [x] CommonDbType C#;
+- [x] naming C#;
+- [x] testes unitários iniciais C#.
 
-### Sprint 2 — Connection Infrastructure
-- connection options;
-- connection string builders;
-- provider factory;
-- test connection;
-- schema padrão;
-- filtros de objetos internos.
+### Sprint 2 — Connection Infrastructure — Concluído C#
+- [x] connection options C#;
+- [x] connection string builders C#;
+- [x] provider factory C#;
+- [x] test connection C#;
+- [x] schema padrão C#;
+- [x] filtros de objetos internos C#.
 
 ### Sprint 3 — PostgreSQL Provider
 - tables;
@@ -799,7 +800,7 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 A especificação operacional detalhada para Codex e outros agentes está disponível em:
 
 ```text
-CODEX.md
+Docs\Readme.md
 ```
 
 Esse arquivo contém contratos, regras invariáveis, ordem de implementação, Sprints, Tasks e critérios de aceite.
