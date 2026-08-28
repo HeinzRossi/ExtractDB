@@ -724,19 +724,21 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] progress C#;
 - [x] cancellation C#.
 
-### Sprint 5 — Firebird Provider
-- tables;
-- columns;
-- BLOB subtype;
-- PK;
-- FK;
-- generators/sequences;
-- identity;
-- trigger + sequence;
-- defaults;
-- views;
-- procedures;
-- triggers.
+### Sprint 5 — Firebird Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] BLOB subtype C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] generators/sequences C#;
+- [x] identity C#;
+- [x] trigger + sequence C#;
+- [x] defaults C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
 ### Sprint 6 — C# Generator
 - type mapper;

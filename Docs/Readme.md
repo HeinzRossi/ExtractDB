@@ -2281,22 +2281,27 @@ Provider SQL Server converte banco de teste integralmente para `DatabaseMetadata
 ### Tasks
 
 ```text
-S5-T01 Tables
-S5-T02 Columns
-S5-T03 BLOB subtype
-S5-T04 PK
-S5-T05 FK
-S5-T06 Composite Keys
-S5-T07 Generator/Sequence
-S5-T08 Identity
-S5-T09 Trigger + Sequence detection
-S5-T10 Defaults
-S5-T11 Views
-S5-T12 Procedures
-S5-T13 Triggers
-S5-T14 Progress
-S5-T15 Cancellation
+S5-T01 Tables — Concluído C#
+S5-T02 Columns — Concluído C#
+S5-T03 BLOB subtype — Concluído C#
+S5-T04 PK — Concluído C#
+S5-T05 FK — Concluído C#
+S5-T06 Composite Keys — Concluído C#
+S5-T07 Generator/Sequence — Concluído C#
+S5-T08 Identity — Concluído C#
+S5-T09 Trigger + Sequence detection — Concluído C#
+S5-T10 Defaults — Concluído C#
+S5-T11 Views — Concluído C#
+S5-T12 Procedures — Concluído C#
+S5-T13 Triggers — Concluído C#
+S5-T14 Progress — Concluído C#
+S5-T15 Cancellation — Concluído C#
 ```
+
+### Aceite
+
+Provider Firebird converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 112. Sprint 6 — C# Generator
 
