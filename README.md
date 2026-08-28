@@ -709,18 +709,20 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] progress C#;
 - [x] cancellation C#.
 
-### Sprint 4 — SQL Server Provider
-- tables;
-- columns;
-- Unicode;
-- PK;
-- FK;
-- identity;
-- defaults;
-- computed;
-- views;
-- procedures;
-- triggers.
+### Sprint 4 — SQL Server Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] Unicode C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] identity C#;
+- [x] defaults C#;
+- [x] computed C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
 ### Sprint 5 — Firebird Provider
 - tables;

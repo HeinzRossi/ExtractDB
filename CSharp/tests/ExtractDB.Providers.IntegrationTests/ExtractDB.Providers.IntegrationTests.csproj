@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <None Include="PostgreSql\Fixtures\*.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="SqlServer\Fixtures\*.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

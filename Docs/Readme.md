@@ -2255,21 +2255,26 @@ Provider converte banco de teste integralmente para `DatabaseMetadata`.
 ### Tasks
 
 ```text
-S4-T01 Tables
-S4-T02 Columns
-S4-T03 Unicode
-S4-T04 PK
-S4-T05 FK
-S4-T06 Composite Keys
-S4-T07 Identity
-S4-T08 Defaults
-S4-T09 Computed
-S4-T10 Views
-S4-T11 Procedures
-S4-T12 Triggers
-S4-T13 Progress
-S4-T14 Cancellation
+S4-T01 Tables — Concluído C#
+S4-T02 Columns — Concluído C#
+S4-T03 Unicode — Concluído C#
+S4-T04 PK — Concluído C#
+S4-T05 FK — Concluído C#
+S4-T06 Composite Keys — Concluído C#
+S4-T07 Identity — Concluído C#
+S4-T08 Defaults — Concluído C#
+S4-T09 Computed — Concluído C#
+S4-T10 Views — Concluído C#
+S4-T11 Procedures — Concluído C#
+S4-T12 Triggers — Concluído C#
+S4-T13 Progress — Concluído C#
+S4-T14 Cancellation — Concluído C#
 ```
+
+### Aceite
+
+Provider SQL Server converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 111. Sprint 5 — Firebird Provider
 
