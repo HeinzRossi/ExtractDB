@@ -694,20 +694,20 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] schema padrão C#;
 - [x] filtros de objetos internos C#.
 
-### Sprint 3 — PostgreSQL Provider
-- tables;
-- columns;
-- PK;
-- FK;
-- sequences;
-- identity;
-- defaults;
-- enums;
-- views;
-- procedures;
-- triggers;
-- progress;
-- cancellation.
+### Sprint 3 — PostgreSQL Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] sequences C#;
+- [x] identity C#;
+- [x] defaults C#;
+- [x] enums C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
 ### Sprint 4 — SQL Server Provider
 - tables;

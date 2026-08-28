@@ -51,6 +51,9 @@ public abstract class DatabaseMetadataProviderBase : IDatabaseMetadataProvider
 
     protected abstract DbConnection CreateConnection(string connectionString);
 
+    protected string BuildConnectionString(DatabaseConnectionOptions options)
+        => connectionStringBuilder.Build(options);
+
     protected virtual Task<string?> ResolveDefaultSchemaAsync(
         DbConnection connection,
         CancellationToken cancellationToken)

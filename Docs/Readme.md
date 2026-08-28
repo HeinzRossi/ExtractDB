@@ -2229,25 +2229,26 @@ Os três bancos podem ser testados sem dependência de UI.
 ### Tasks
 
 ```text
-S3-T01 Tables
-S3-T02 Columns
-S3-T03 PK
-S3-T04 FK
-S3-T05 Composite Keys
-S3-T06 Sequences
-S3-T07 Identity
-S3-T08 Defaults
-S3-T09 Enums
-S3-T10 Views
-S3-T11 Procedures
-S3-T12 Triggers
-S3-T13 Progress
-S3-T14 Cancellation
+S3-T01 Tables — Concluído C#
+S3-T02 Columns — Concluído C#
+S3-T03 PK — Concluído C#
+S3-T04 FK — Concluído C#
+S3-T05 Composite Keys — Concluído C#
+S3-T06 Sequences — Concluído C#
+S3-T07 Identity — Concluído C#
+S3-T08 Defaults — Concluído C#
+S3-T09 Enums — Concluído C#
+S3-T10 Views — Concluído C#
+S3-T11 Procedures — Concluído C#
+S3-T12 Triggers — Concluído C#
+S3-T13 Progress — Concluído C#
+S3-T14 Cancellation — Concluído C#
 ```
 
 ### Aceite
 
 Provider converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 110. Sprint 4 — SQL Server Provider
 

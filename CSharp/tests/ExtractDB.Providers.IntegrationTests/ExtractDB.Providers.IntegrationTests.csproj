@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\src\ExtractDB.Providers\ExtractDB.Providers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="PostgreSql\Fixtures\*.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
