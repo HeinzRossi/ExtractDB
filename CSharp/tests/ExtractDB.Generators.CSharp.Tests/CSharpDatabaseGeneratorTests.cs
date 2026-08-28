@@ -78,6 +78,129 @@ public sealed class CSharpDatabaseGeneratorTests
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "Scripts", "Views", "public")));
     }
 
+    [Fact]
+    public void Generate_exports_view_procedure_and_trigger_sql_to_expected_schema_folders()
+    {
+        using var directory = TempDirectory.Create();
+        const string viewSql = "create view public.vw_cliente as\r\nselect * from public.cliente;";
+        const string procedureSql = "create procedure public.sp_cliente()\r\nlanguage sql\r\nas $$ select 1; $$;";
+        const string triggerSql = "create trigger tr_cliente\r\nbefore insert on cliente\r\nexecute function fn_cliente();";
+        var database = new DatabaseMetadata
+        {
+            Provider = DatabaseProvider.PostgreSql,
+            DatabaseName = "demo",
+            Tables = [],
+            Views =
+            [
+                new ViewMetadata
+                {
+                    Schema = "public",
+                    Name = "vw_cliente",
+                    Sql = viewSql
+                }
+            ],
+            Procedures =
+            [
+                new ProcedureMetadata
+                {
+                    Schema = "app",
+                    Name = "sp_cliente",
+                    Sql = procedureSql
+                }
+            ],
+            Triggers =
+            [
+                new TriggerMetadata
+                {
+                    Name = "tr_cliente",
+                    Sql = triggerSql
+                }
+            ]
+        };
+
+        var result = new CSharpDatabaseGenerator().Generate(database, Context(directory.Path));
+
+        Assert.Equal(0, result.ErrorCount);
+        Assert.Equal(
+            viewSql,
+            File.ReadAllText(Path.Combine(directory.Path, "Scripts", "Views", "public", "vw_cliente.sql")));
+        Assert.Equal(
+            procedureSql,
+            File.ReadAllText(Path.Combine(directory.Path, "Scripts", "Procedures", "app", "sp_cliente.sql")));
+        Assert.Equal(
+            triggerSql,
+            File.ReadAllText(Path.Combine(directory.Path, "Scripts", "Triggers", "tr_cliente.sql")));
+    }
+
+    [Fact]
+    public void Generate_overwrites_sql_scripts_and_writes_utf8_without_bom_crlf()
+    {
+        using var directory = TempDirectory.Create();
+        var scriptPath = Path.Combine(directory.Path, "Scripts", "Views", "public", "vw_cliente.sql");
+        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
+        File.WriteAllText(scriptPath, "old content");
+        var database = new DatabaseMetadata
+        {
+            Provider = DatabaseProvider.PostgreSql,
+            DatabaseName = "demo",
+            Tables = [],
+            Views =
+            [
+                new ViewMetadata
+                {
+                    Schema = "public",
+                    Name = "vw_cliente",
+                    Sql = "select 1\nunion all\nselect 2"
+                }
+            ]
+        };
+
+        new CSharpDatabaseGenerator().Generate(database, Context(directory.Path));
+
+        var bytes = File.ReadAllBytes(scriptPath);
+        var text = Encoding.UTF8.GetString(bytes);
+
+        Assert.False(StartsWith(bytes, Encoding.UTF8.GetPreamble()));
+        Assert.DoesNotContain("old content", text);
+        Assert.Equal("select 1\r\nunion all\r\nselect 2", text);
+    }
+
+    [Fact]
+    public void Generate_records_script_error_and_continues_exporting_remaining_scripts()
+    {
+        using var directory = TempDirectory.Create();
+        var database = new DatabaseMetadata
+        {
+            Provider = DatabaseProvider.PostgreSql,
+            DatabaseName = "demo",
+            Tables = [],
+            Views =
+            [
+                new ViewMetadata
+                {
+                    Schema = "public",
+                    Name = "invalid\0name",
+                    Sql = "select 1"
+                },
+                new ViewMetadata
+                {
+                    Schema = "public",
+                    Name = "vw_ok",
+                    Sql = "select 2"
+                }
+            ]
+        };
+
+        var result = new CSharpDatabaseGenerator().Generate(database, Context(directory.Path));
+
+        Assert.Equal(1, result.ErrorCount);
+        Assert.Contains(result.Messages, message =>
+            message.ObjectType == DatabaseObjectType.View
+            && message.ObjectName == "invalid\0name"
+            && message.Stage == "SqlExport");
+        Assert.True(File.Exists(Path.Combine(directory.Path, "Scripts", "Views", "public", "vw_ok.sql")));
+    }
+
     private static GenerationContext Context(string outputDirectory, params string[] selectedTables)
         => new()
         {

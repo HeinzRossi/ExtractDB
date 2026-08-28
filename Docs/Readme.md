@@ -2329,6 +2329,8 @@ Projeto de referência contendo os fontes gerados compila no .NET 10.
 
 ## 113. Sprint 7 — Delphi Generator
 
+**Status:** Deferido. Delphi não será implementado agora.
+
 ### Tasks
 
 ```text
@@ -2353,16 +2355,17 @@ Projeto de referência contendo os fontes gerados compila no Delphi 12 Athens.
 ### Tasks
 
 ```text
-S8-T01 View Export
-S8-T02 Procedure Export
-S8-T03 Trigger Export
-S8-T04 Schema Folder Handling
-S8-T05 Firebird Folder Handling
+S8-T01 View Export — Concluído C#
+S8-T02 Procedure Export — Concluído C#
+S8-T03 Trigger Export — Concluído C#
+S8-T04 Schema Folder Handling — Concluído C#
+S8-T05 Firebird Folder Handling — Concluído C#
 ```
 
 ### Aceite
 
 Scripts exportados preservam o SQL original.
+**Status:** Concluído no C#.
 
 ## 115. Sprint 9 — WPF Wizard
 

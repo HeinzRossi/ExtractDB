@@ -749,7 +749,7 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] dynamic imports C#;
 - [x] file writer C#.
 
-### Sprint 7 — Delphi Generator
+### Sprint 7 — Delphi Generator — Deferido
 - type mapper;
 - decimal mapper;
 - SimpleORM attributes;
@@ -759,11 +759,11 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - dynamic uses;
 - file writer.
 
-### Sprint 8 — SQL Export
-- views;
-- procedures;
-- triggers;
-- organização por schema.
+### Sprint 8 — SQL Export — Concluído C#
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] organização por schema C#.
 
 ### Sprint 9 — WPF Wizard
 - MVVM;
