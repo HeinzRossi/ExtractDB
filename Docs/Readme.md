@@ -2308,23 +2308,24 @@ Provider Firebird converte banco de teste integralmente para `DatabaseMetadata`.
 ### Tasks
 
 ```text
-S6-T01 CSharpTypeMapper
-S6-T02 AttributeWriter
-S6-T03 EntityGenerator
-S6-T04 RelationshipWriter
-S6-T05 EnumGenerator
-S6-T06 SequenceAttribute
-S6-T07 DatabaseDefaultAttribute
-S6-T08 DatabaseComputedAttribute
-S6-T09 GeneratedByTriggerAttribute
-S6-T10 CompositeForeignKeyAttribute
-S6-T11 DynamicUsings
-S6-T12 FileWriter
+S6-T01 CSharpTypeMapper — Concluído C#
+S6-T02 AttributeWriter — Concluído C#
+S6-T03 EntityGenerator — Concluído C#
+S6-T04 RelationshipWriter — Concluído C#
+S6-T05 EnumGenerator — Concluído C#
+S6-T06 SequenceAttribute — Concluído C#
+S6-T07 DatabaseDefaultAttribute — Concluído C#
+S6-T08 DatabaseComputedAttribute — Concluído C#
+S6-T09 GeneratedByTriggerAttribute — Concluído C#
+S6-T10 CompositeForeignKeyAttribute — Concluído C#
+S6-T11 DynamicUsings — Concluído C#
+S6-T12 FileWriter — Concluído C#
 ```
 
 ### Aceite
 
 Projeto de referência contendo os fontes gerados compila no .NET 10.
+**Status:** Concluído no C#.
 
 ## 113. Sprint 7 — Delphi Generator
 

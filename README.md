@@ -740,14 +740,14 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] progress C#;
 - [x] cancellation C#.
 
-### Sprint 6 — C# Generator
-- type mapper;
-- Data Annotations;
-- custom attributes;
-- relationships;
-- enums;
-- dynamic imports;
-- file writer.
+### Sprint 6 — C# Generator — Concluído C#
+- [x] type mapper C#;
+- [x] Data Annotations C#;
+- [x] custom attributes C#;
+- [x] relationships C#;
+- [x] enums C#;
+- [x] dynamic imports C#;
+- [x] file writer C#.
 
 ### Sprint 7 — Delphi Generator
 - type mapper;
