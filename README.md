@@ -1,11 +1,11 @@
-# ReflexoDB
+# ExtractDB
 
-**ReflexoDB** é uma ferramenta de **Schema Reverse Engineering** voltada à leitura de metadados de bancos de dados e geração de Models e scripts de objetos SQL.
+**ExtractDB** é uma ferramenta de **Schema Reverse Engineering** voltada à leitura de metadados de bancos de dados e geração de Models e scripts de objetos SQL.
 
 O projeto é composto por **duas aplicações desktop independentes**:
 
-- **ReflexoDB C#** — .NET 10 + WPF
-- **ReflexoDB Delphi** — Delphi 12 Athens+ + VCL
+- **ExtractDB C#** — .NET 10 + WPF
+- **ExtractDB Delphi** — Delphi 12 Athens+ + VCL
 
 Ambas seguem o mesmo modelo conceitual de metadados, mas possuem implementações nativas e independentes para cada ecossistema.
 
@@ -13,7 +13,7 @@ Ambas seguem o mesmo modelo conceitual de metadados, mas possuem implementaçõe
 
 ## Objetivo
 
-O ReflexoDB conecta-se a um banco existente, lê sua estrutura e gera código-fonte que reflita fielmente o schema encontrado.
+O ExtractDB conecta-se a um banco existente, lê sua estrutura e gera código-fonte que reflita fielmente o schema encontrado.
 
 SGBDs suportados:
 
@@ -129,23 +129,23 @@ File Writer
 ## Estrutura do repositório
 
 ```text
-ReflexoDB/
+ExtractDB/
 ├── README.md
-├── CODEX.md
+├── Readme.md
 ├── docs/
 ├── csharp/
-│   ├── ReflexoDB.sln
+│   ├── ExtractDB.slnx
 │   ├── src/
-│   │   ├── ReflexoDB.Core/
-│   │   ├── ReflexoDB.Application/
-│   │   ├── ReflexoDB.Providers/
-│   │   ├── ReflexoDB.Generators.CSharp/
-│   │   └── ReflexoDB.Wpf/
+│   │   ├── ExtractDB.Core/
+│   │   ├── ExtractDB.Application/
+│   │   ├── ExtractDB.Providers/
+│   │   ├── ExtractDB.Generators.CSharp/
+│   │   └── ExtractDB.Wpf/
 │   └── tests/
 │
 ├── delphi/
-│   ├── ReflexoDB.dproj
-│   ├── ReflexoDB.dpr
+│   ├── ExtractDB.dproj
+│   ├── ExtractDB.dpr
 │   ├── Source/
 │   │   ├── Core/
 │   │   ├── Application/
@@ -267,29 +267,50 @@ Namespace:
 O Delphi utiliza atributos do SimpleORM.
 
 ```delphi
+uses
+  SimpleAttributes,
+  ExtractDB.Generators.Attributes.MetadataAttributes;
+
 [Tabela('CLIENTE')]
 TCliente = class
 private
   FIdCliente: Integer;
   FNome: string;
 published
-  [Campo('ID_CLIENTE'), PK, AutoInc, NotNull]
+  [Campo('ID_CLIENTE', 'integer'), PK, AutoInc, NotNull]
   property IdCliente: Integer
     read FIdCliente
     write FIdCliente;
 
-  [Campo('NOME'), NotNull]
+  [Campo('NOME', 'varchar', 100), NotNull]
   property Nome: string
     read FNome
     write FNome;
 end;
 ```
 
-Caso algum atributo necessário não exista no SimpleORM, poderá ser incorporado ao framework.
+O gerador usa a API local do SimpleORM em `SimpleAttributes.pas`:
+
+- `Campo(aName, Tipo, Tamanho = 0)`
+- `PK(aName = '')`
+- `Sequence(pNome)`
+- `ForeignKey(pNomeForeignKey, pNomeConstraint, pTabelaReferencia, pColunaReferencia)`
+
+Em `Campo`, `Tipo` e `Tamanho` representam o tipo físico do banco e vêm de `NativeType`, tamanho, precisão e escala do provider. O tipo da propriedade continua Delphi.
+
+```delphi
+[Campo('VALOR', 'NUMERIC', 18.2)]
+property Valor: Currency
+  read FValor
+  write FValor;
+```
+
+Para PostgreSQL, por exemplo, `numeric(18,2)` pode sair como `Campo('VALOR', 'numeric', 18.2)`; para Firebird, como `Campo('VALOR', 'NUMERIC', 18.2)`.
+
+Atributos sem equivalente no SimpleORM local ficam em uma unit própria do ExtractDB.
 
 Possíveis extensões:
 
-- `Sequence`
 - `GeneratedByTrigger`
 - `DatabaseDefault`
 - `DatabaseComputed`
@@ -319,7 +340,7 @@ private
   procedure SetDocumento(const Value: TStream);
 
 published
-  [Campo('DOCUMENTO')]
+  [Campo('DOCUMENTO', 'bytea')]
   property Documento: TStream
     read FDocumento
     write SetDocumento;
@@ -408,7 +429,7 @@ property IdPerfil: Integer;
 
 Tabelas sem PK são geradas normalmente.
 
-O ReflexoDB não tenta inferir ou criar uma chave.
+O ExtractDB não tenta inferir ou criar uma chave.
 
 ---
 
@@ -434,7 +455,7 @@ Um warning é exibido na interface.
 
 ## SQL gerado
 
-Views, Procedures e Triggers são exportados preservando o SQL nativo do banco.
+Views, Procedures e Triggers são exportados preservando o SQL nativo do banco. Sequences são exportadas como DDL de criação nova e sempre usam `START WITH 0`.
 
 Não são realizadas:
 
@@ -450,7 +471,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 Quando aplicável:
@@ -463,6 +485,12 @@ Scripts/
 ```
 
 No Firebird não é criada uma pasta artificial de schema.
+
+Exemplo de sequence exportada:
+
+```sql
+CREATE SEQUENCE GEN_PEDIDO_ID START WITH 0;
+```
 
 ---
 
@@ -485,7 +513,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ### Delphi
@@ -501,7 +530,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ---
@@ -678,104 +708,113 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 
 ## Roadmap
 
-### Sprint 1 — Core
-- estrutura das soluções;
-- modelo normalizado;
-- CommonDbType;
-- naming;
-- testes unitários iniciais.
+### Sprint 1 — Core — Concluído C# e Delphi
+- [x] estrutura C# da solução;
+- [x] estrutura Delphi da solução;
+- [x] modelo normalizado C# e Delphi;
+- [x] CommonDbType C# e Delphi;
+- [x] naming C# e Delphi;
+- [x] testes unitários iniciais C# e Delphi.
 
-### Sprint 2 — Connection Infrastructure
-- connection options;
-- connection string builders;
-- provider factory;
-- test connection;
-- schema padrão;
-- filtros de objetos internos.
+### Sprint 2 — Connection Infrastructure — Concluído C#
+- [x] connection options C#;
+- [x] connection string builders C#;
+- [x] provider factory C#;
+- [x] test connection C#;
+- [x] schema padrão C#;
+- [x] filtros de objetos internos C#.
 
-### Sprint 3 — PostgreSQL Provider
-- tables;
-- columns;
-- PK;
-- FK;
-- sequences;
-- identity;
-- defaults;
-- enums;
-- views;
-- procedures;
-- triggers;
-- progress;
-- cancellation.
+### Sprint 3 — PostgreSQL Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] sequences C#;
+- [x] identity C#;
+- [x] defaults C#;
+- [x] enums C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
-### Sprint 4 — SQL Server Provider
-- tables;
-- columns;
-- Unicode;
-- PK;
-- FK;
-- identity;
-- defaults;
-- computed;
-- views;
-- procedures;
-- triggers.
+### Sprint 4 — SQL Server Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] Unicode C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] identity C#;
+- [x] defaults C#;
+- [x] computed C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
-### Sprint 5 — Firebird Provider
-- tables;
-- columns;
-- BLOB subtype;
-- PK;
-- FK;
-- generators/sequences;
-- identity;
-- trigger + sequence;
-- defaults;
-- views;
-- procedures;
-- triggers.
+### Sprint 5 — Firebird Provider — Concluído C#
+- [x] tables C#;
+- [x] columns C#;
+- [x] BLOB subtype C#;
+- [x] PK C#;
+- [x] FK C#;
+- [x] generators/sequences C#;
+- [x] identity C#;
+- [x] trigger + sequence C#;
+- [x] defaults C#;
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] progress C#;
+- [x] cancellation C#.
 
-### Sprint 6 — C# Generator
-- type mapper;
-- Data Annotations;
-- custom attributes;
-- relationships;
-- enums;
-- dynamic imports;
-- file writer.
+### Sprint 6 — C# Generator — Concluído C#
+- [x] type mapper C#;
+- [x] Data Annotations C#;
+- [x] custom attributes C#;
+- [x] relationships C#;
+- [x] enums C#;
+- [x] dynamic imports C#;
+- [x] file writer C#.
 
-### Sprint 7 — Delphi Generator
-- type mapper;
-- decimal mapper;
-- SimpleORM attributes;
-- relationships;
-- enums;
-- streams;
-- dynamic uses;
-- file writer.
+### Sprint 7 — Delphi Generator — Concluído Delphi
+- [x] type mapper Delphi;
+- [x] decimal mapper Delphi;
+- [x] SimpleORM attributes Delphi;
+- [x] relationships Delphi;
+- [x] enums Delphi;
+- [x] streams Delphi;
+- [x] dynamic uses Delphi;
+- [x] file writer Delphi.
 
-### Sprint 8 — SQL Export
-- views;
-- procedures;
-- triggers;
-- organização por schema.
+### Sprint 8 — SQL Export — Concluído C#
+- [x] views C#;
+- [x] procedures C#;
+- [x] triggers C#;
+- [x] organização por schema C#.
 
-### Sprint 9 — WPF Wizard
-- MVVM;
-- DI;
-- conexão;
-- leitura;
-- seleção;
-- geração;
-- resultado.
+### Sprint 9 — WPF Wizard — Concluído C#
+- [x] MVVM C#;
+- [x] DI C#;
+- [x] conexão C#;
+- [x] leitura C#;
+- [x] seleção C#;
+- [x] geração C#;
+- [x] resultado C#.
 
-### Sprint 10 — Delphi VCL Wizard
-- bootstrap;
-- forms;
-- TTask;
-- cancelamento;
-- geração;
-- resultado.
+### Sprint 10 — Delphi VCL Wizard — Concluído Delphi
+- [x] bootstrap Delphi;
+- [x] FireDAC connection factory Delphi;
+- [x] connection form Delphi;
+- [x] test connection Delphi;
+- [x] metadata task Delphi;
+- [x] object selection Delphi;
+- [x] generation configuration Delphi;
+- [x] generation task Delphi;
+- [x] cancellation Delphi;
+- [x] result form Delphi.
 
 ### Sprint 11 — Integration Tests
 - containers;
@@ -799,7 +838,7 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 A especificação operacional detalhada para Codex e outros agentes está disponível em:
 
 ```text
-CODEX.md
+Docs\Readme.md
 ```
 
 Esse arquivo contém contratos, regras invariáveis, ordem de implementação, Sprints, Tasks e critérios de aceite.

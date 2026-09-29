@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ExtractDB.Application/ExtractDB.Application.csproj" Id="ebfcae39-1926-49c4-814a-53ae7f6c9517" />
+    <Project Path="src/ExtractDB.Core/ExtractDB.Core.csproj" Id="edf6170c-8277-4f24-8ce6-ec8b2e252034" />
+    <Project Path="src/ExtractDB.Generators.CSharp/ExtractDB.Generators.CSharp.csproj" Id="8f2ef4cf-e5cf-4628-861d-56b2c0e4c56d" />
+    <Project Path="src/ExtractDB.Providers/ExtractDB.Providers.csproj" Id="2790712d-ed25-431c-9458-236a04bc44b4" />
+    <Project Path="src/ExtractDB.Wpf/ExtractDB.Wpf.csproj" Id="78203154-7442-4aea-841a-06b0c0faa6d8" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ExtractDB.Core.Tests/ExtractDB.Core.Tests.csproj" Id="7589cbf6-f42c-4516-9b2f-5c320ebff554" />
+    <Project Path="tests/ExtractDB.Generators.CSharp.Tests/ExtractDB.Generators.CSharp.Tests.csproj" Id="3f8da2f6-f205-4cc5-b552-30248b353070" />
+    <Project Path="tests/ExtractDB.Providers.IntegrationTests/ExtractDB.Providers.IntegrationTests.csproj" Id="2a5130e5-d4b4-43b6-89ae-c5ac73d4490a" />
+    <Project Path="tests/ExtractDB.Wpf.Tests/ExtractDB.Wpf.Tests.csproj" Id="b6d39d20-d4df-4ec4-94d0-a3a6484504bb" />
+  </Folder>
+</Solution>

@@ -1,4 +1,4 @@
-# CODEX.md — DaoGenerator Schema Reverse Engineering
+# Readme.md — ExtractDB Schema Reverse Engineering
 
 ## 1. Objetivo
 
@@ -90,31 +90,31 @@ Generators ────→ Core
 Criar:
 
 ```text
-DaoGenerator.sln
+ExtractDB.slnx
 
 src/
-├── DaoGenerator.Core
-├── DaoGenerator.Application
-├── DaoGenerator.Providers
-├── DaoGenerator.Generators.CSharp
-└── DaoGenerator.Wpf
+├── ExtractDB.Core
+├── ExtractDB.Application
+├── ExtractDB.Providers
+├── ExtractDB.Generators.CSharp
+└── ExtractDB.Wpf
 
 tests/
-├── DaoGenerator.Core.Tests
-├── DaoGenerator.Generators.CSharp.Tests
-└── DaoGenerator.Providers.IntegrationTests
+├── ExtractDB.Core.Tests
+├── ExtractDB.Generators.CSharp.Tests
+└── ExtractDB.Providers.IntegrationTests
 ```
 
 ### Dependências permitidas
 
 ```text
-DaoGenerator.Core
+ExtractDB.Core
     ↑
-    ├── DaoGenerator.Application
-    ├── DaoGenerator.Providers
-    └── DaoGenerator.Generators.CSharp
+    ├── ExtractDB.Application
+    ├── ExtractDB.Providers
+    └── ExtractDB.Generators.CSharp
 
-DaoGenerator.Wpf
+ExtractDB.Wpf
     ↓
 Application
 Providers
@@ -799,14 +799,14 @@ Não criar `CompositeKeyAttribute`.
 Simples:
 
 ```delphi
-[Campo('ID_CLIENTE'), PK]
+[Campo('ID_CLIENTE', 'integer'), PK]
 ```
 
 Composta:
 
 ```delphi
-[Campo('ID_USUARIO'), PK]
-[Campo('ID_PERFIL'), PK]
+[Campo('ID_USUARIO', 'integer'), PK]
+[Campo('ID_PERFIL', 'integer'), PK]
 ```
 
 ## 32. FK Simples
@@ -824,12 +824,12 @@ public Cliente Cliente { get; set; } = null!;
 Delphi:
 
 ```delphi
-[Campo('ID_CLIENTE'), FK, NotNull]
+[Campo('ID_CLIENTE', 'integer'), FK, ForeignKey('ID_CLIENTE', 'FK_PEDIDO_CLIENTE', 'CLIENTE', 'ID_CLIENTE'), NotNull]
 property IdCliente: Integer
   read FIdCliente
   write FIdCliente;
 
-[BelongsTo('CLIENTE', 'ID_CLIENTE')]
+[BelongsTo('TCliente')]
 property Cliente: TCliente
   read FCliente
   write FCliente;
@@ -979,7 +979,7 @@ AutoInc
 Exemplo:
 
 ```delphi
-[Campo('ID_CLIENTE'), PK, AutoInc, NotNull]
+[Campo('ID_CLIENTE', 'integer'), PK, AutoInc, NotNull]
 ```
 
 ## 41. Sequence
@@ -1290,7 +1290,7 @@ private
 Propriedade:
 
 ```delphi
-[Campo('DOCUMENTO')]
+[Campo('DOCUMENTO', 'bytea')]
 property Documento: TStream
   read FDocumento
   write SetDocumento;
@@ -1385,6 +1385,8 @@ FK
 NotNull
 AutoInc
 BelongsTo
+Sequence
+ForeignKey
 ```
 
 Antes de criar atributos novos, verificar se SimpleORM já possui suporte.
@@ -1393,21 +1395,39 @@ Antes de criar atributos novos, verificar se SimpleORM já possui suporte.
 
 O atributo `Campo` deve carregar tamanho quando aplicável.
 
-Exemplo conceitual:
+Assinatura local confirmada:
+
+```text
+Campo(aName, Tipo, Tamanho = 0)
+PK(aName = '')
+Sequence(pNome)
+ForeignKey(pNomeForeignKey, pNomeConstraint, pTabelaReferencia, pColunaReferencia)
+```
+
+Exemplo:
 
 ```text
 VARCHAR(100)
-→ Campo(..., 100)
+→ Campo('NOME', 'varchar', 100)
+
+NUMERIC(18,2)
+→ Campo('VALOR', 'numeric', 18.2)
 ```
 
-Confirmar assinatura real antes da implementação.
+`Campo.Tipo` é sempre o tipo físico do banco vindo de `NativeType`. O tipo Delphi fica somente na propriedade:
+
+```delphi
+[Campo('VALOR', 'NUMERIC', 18.2)]
+property Valor: Currency
+  read FValor
+  write FValor;
+```
 
 ## 62. Atributos SimpleORM Adicionais
 
 Se não existirem, adicionar:
 
 ```text
-Sequence
 GeneratedByTrigger
 DatabaseDefault
 DatabaseComputed
@@ -1606,9 +1626,32 @@ Scripts/
 └── Triggers/
 ```
 
+## 77.1 Sequences
+
+Não gerar classes.
+
+Exportar como SQL independente:
+
+```text
+Scripts/
+└── Sequences/
+```
+
+Sequences/generators não devem depender de inferência obrigatória de coluna, pois nem todo banco ou schema expressa essa relação de forma padronizada.
+
+Como os scripts criam objetos novos, todas as sequences exportadas devem iniciar em zero:
+
+```sql
+CREATE SEQUENCE GEN_PEDIDO_ID START WITH 0;
+```
+
+Quando o provider expuser incremento, preservar `INCREMENT BY`.
+
 ## 78. SQL
 
 Preservar SQL nativo.
+
+Exceção: scripts de sequence são DDL normalizado de criação nova, com `START WITH 0`.
 
 Não:
 
@@ -1636,7 +1679,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ## 80. Estrutura de Saída Delphi
@@ -1652,7 +1696,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ## 81. Schema nas Pastas SQL
@@ -2158,34 +2203,38 @@ UI
 
 Criar foundations e contratos.
 
-#### S1-T01 — Estrutura C#
+#### S1-T01 — Estrutura C# — Concluído
 
 **Resultado esperado:** Solution criada com todas as camadas.  
 **Aceite:** Compila sem dependências circulares.  
 **Prioridade:** Alta.
+**Status:** Concluído no C#.
 
-#### S1-T02 — Estrutura Delphi
+#### S1-T02 — Estrutura Delphi — Concluído Delphi
 
 **Resultado esperado:** Estrutura por units/pastas criada.  
 **Aceite:** Projeto VCL compila.  
 **Prioridade:** Alta.
+**Status:** Concluído no Delphi.
 
-#### S1-T03 — Metadata
+#### S1-T03 — Metadata — Concluído C# e Delphi
 
 Implementar todos os tipos normalizados.
 
 **Aceite:** C# e Delphi possuem representação conceitualmente equivalente.  
 **Dependência:** S1-T01/S1-T02.  
 **Prioridade:** Alta.
+**Status:** Concluído no C# e no Delphi.
 
-#### S1-T04 — CommonDbType
+#### S1-T04 — CommonDbType — Concluído C# e Delphi
 
 Implementar enum.
 
 **Aceite:** Tipos previstos nesta documentação representáveis.  
 **Prioridade:** Alta.
+**Status:** Concluído no C# e no Delphi.
 
-#### S1-T05 — Naming
+#### S1-T05 — Naming — Concluído C# e Delphi
 
 Implementar:
 
@@ -2196,6 +2245,7 @@ Implementar:
 
 **Aceite:** Testes automatizados cobrindo todos os exemplos deste documento.  
 **Prioridade:** Alta.
+**Status:** Concluído no C# e no Delphi.
 
 ## 108. Sprint 2 — Connection Infrastructure
 
@@ -2206,178 +2256,200 @@ Conexão e seleção de provider.
 ### Tasks
 
 ```text
-S2-T01 DatabaseConnectionOptions
-S2-T02 Connection String Builders
-S2-T03 MetadataProviderFactory
-S2-T04 TestConnection
-S2-T05 Default Schema Resolution
-S2-T06 System Object Filtering
+S2-T01 DatabaseConnectionOptions — Concluído C#
+S2-T02 Connection String Builders — Concluído C#
+S2-T03 MetadataProviderFactory — Concluído C#
+S2-T04 TestConnection — Concluído C#
+S2-T05 Default Schema Resolution — Concluído C#
+S2-T06 System Object Filtering — Concluído C#
 ```
 
 ### Aceite
 
 Os três bancos podem ser testados sem dependência de UI.
+**Status:** Concluído no C#.
 
 ## 109. Sprint 3 — PostgreSQL Provider
 
 ### Tasks
 
 ```text
-S3-T01 Tables
-S3-T02 Columns
-S3-T03 PK
-S3-T04 FK
-S3-T05 Composite Keys
-S3-T06 Sequences
-S3-T07 Identity
-S3-T08 Defaults
-S3-T09 Enums
-S3-T10 Views
-S3-T11 Procedures
-S3-T12 Triggers
-S3-T13 Progress
-S3-T14 Cancellation
+S3-T01 Tables — Concluído C#
+S3-T02 Columns — Concluído C#
+S3-T03 PK — Concluído C#
+S3-T04 FK — Concluído C#
+S3-T05 Composite Keys — Concluído C#
+S3-T06 Sequences — Concluído C#
+S3-T07 Identity — Concluído C#
+S3-T08 Defaults — Concluído C#
+S3-T09 Enums — Concluído C#
+S3-T10 Views — Concluído C#
+S3-T11 Procedures — Concluído C#
+S3-T12 Triggers — Concluído C#
+S3-T13 Progress — Concluído C#
+S3-T14 Cancellation — Concluído C#
 ```
 
 ### Aceite
 
 Provider converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 110. Sprint 4 — SQL Server Provider
 
 ### Tasks
 
 ```text
-S4-T01 Tables
-S4-T02 Columns
-S4-T03 Unicode
-S4-T04 PK
-S4-T05 FK
-S4-T06 Composite Keys
-S4-T07 Identity
-S4-T08 Defaults
-S4-T09 Computed
-S4-T10 Views
-S4-T11 Procedures
-S4-T12 Triggers
-S4-T13 Progress
-S4-T14 Cancellation
+S4-T01 Tables — Concluído C#
+S4-T02 Columns — Concluído C#
+S4-T03 Unicode — Concluído C#
+S4-T04 PK — Concluído C#
+S4-T05 FK — Concluído C#
+S4-T06 Composite Keys — Concluído C#
+S4-T07 Identity — Concluído C#
+S4-T08 Defaults — Concluído C#
+S4-T09 Computed — Concluído C#
+S4-T10 Views — Concluído C#
+S4-T11 Procedures — Concluído C#
+S4-T12 Triggers — Concluído C#
+S4-T13 Progress — Concluído C#
+S4-T14 Cancellation — Concluído C#
 ```
+
+### Aceite
+
+Provider SQL Server converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 111. Sprint 5 — Firebird Provider
 
 ### Tasks
 
 ```text
-S5-T01 Tables
-S5-T02 Columns
-S5-T03 BLOB subtype
-S5-T04 PK
-S5-T05 FK
-S5-T06 Composite Keys
-S5-T07 Generator/Sequence
-S5-T08 Identity
-S5-T09 Trigger + Sequence detection
-S5-T10 Defaults
-S5-T11 Views
-S5-T12 Procedures
-S5-T13 Triggers
-S5-T14 Progress
-S5-T15 Cancellation
+S5-T01 Tables — Concluído C#
+S5-T02 Columns — Concluído C#
+S5-T03 BLOB subtype — Concluído C#
+S5-T04 PK — Concluído C#
+S5-T05 FK — Concluído C#
+S5-T06 Composite Keys — Concluído C#
+S5-T07 Generator/Sequence — Concluído C#
+S5-T08 Identity — Concluído C#
+S5-T09 Trigger + Sequence detection — Concluído C#
+S5-T10 Defaults — Concluído C#
+S5-T11 Views — Concluído C#
+S5-T12 Procedures — Concluído C#
+S5-T13 Triggers — Concluído C#
+S5-T14 Progress — Concluído C#
+S5-T15 Cancellation — Concluído C#
 ```
+
+### Aceite
+
+Provider Firebird converte banco de teste integralmente para `DatabaseMetadata`.
+**Status:** Concluído no C#.
 
 ## 112. Sprint 6 — C# Generator
 
 ### Tasks
 
 ```text
-S6-T01 CSharpTypeMapper
-S6-T02 AttributeWriter
-S6-T03 EntityGenerator
-S6-T04 RelationshipWriter
-S6-T05 EnumGenerator
-S6-T06 SequenceAttribute
-S6-T07 DatabaseDefaultAttribute
-S6-T08 DatabaseComputedAttribute
-S6-T09 GeneratedByTriggerAttribute
-S6-T10 CompositeForeignKeyAttribute
-S6-T11 DynamicUsings
-S6-T12 FileWriter
+S6-T01 CSharpTypeMapper — Concluído C#
+S6-T02 AttributeWriter — Concluído C#
+S6-T03 EntityGenerator — Concluído C#
+S6-T04 RelationshipWriter — Concluído C#
+S6-T05 EnumGenerator — Concluído C#
+S6-T06 SequenceAttribute — Concluído C#
+S6-T07 DatabaseDefaultAttribute — Concluído C#
+S6-T08 DatabaseComputedAttribute — Concluído C#
+S6-T09 GeneratedByTriggerAttribute — Concluído C#
+S6-T10 CompositeForeignKeyAttribute — Concluído C#
+S6-T11 DynamicUsings — Concluído C#
+S6-T12 FileWriter — Concluído C#
 ```
 
 ### Aceite
 
 Projeto de referência contendo os fontes gerados compila no .NET 10.
+**Status:** Concluído no C#.
 
 ## 113. Sprint 7 — Delphi Generator
+
+**Status:** Concluído no Delphi.
 
 ### Tasks
 
 ```text
-S7-T01 DelphiTypeMapper
-S7-T02 DecimalMapper
-S7-T03 SimpleOrmAttributeWriter
-S7-T04 EntityGenerator
-S7-T05 RelationshipWriter
-S7-T06 EnumGenerator
-S7-T07 StreamGeneration
-S7-T08 StreamSetterGeneration
-S7-T09 DynamicUses
-S7-T10 FileWriter
+S7-T01 DelphiTypeMapper — Concluído Delphi
+S7-T02 DecimalMapper — Concluído Delphi
+S7-T03 SimpleOrmAttributeWriter — Concluído Delphi
+S7-T04 EntityGenerator — Concluído Delphi
+S7-T05 RelationshipWriter — Concluído Delphi
+S7-T06 EnumGenerator — Concluído Delphi
+S7-T07 StreamGeneration — Concluído Delphi
+S7-T08 StreamSetterGeneration — Concluído Delphi
+S7-T09 DynamicUses — Concluído Delphi
+S7-T10 FileWriter — Concluído Delphi
 ```
 
 ### Aceite
 
 Projeto de referência contendo os fontes gerados compila no Delphi 12 Athens.
+**Status:** Concluído no Delphi.
 
 ## 114. Sprint 8 — SQL Export
 
 ### Tasks
 
 ```text
-S8-T01 View Export
-S8-T02 Procedure Export
-S8-T03 Trigger Export
-S8-T04 Schema Folder Handling
-S8-T05 Firebird Folder Handling
+S8-T01 View Export — Concluído C#
+S8-T02 Procedure Export — Concluído C#
+S8-T03 Trigger Export — Concluído C#
+S8-T04 Schema Folder Handling — Concluído C#
+S8-T05 Firebird Folder Handling — Concluído C#
 ```
 
 ### Aceite
 
 Scripts exportados preservam o SQL original.
+**Status:** Concluído no C#.
 
 ## 115. Sprint 9 — WPF Wizard
 
 ### Tasks
 
 ```text
-S9-T01 DI Composition Root
-S9-T02 Connection View
-S9-T03 Test Connection
-S9-T04 Read Metadata
-S9-T05 Progress
-S9-T06 Cancellation
-S9-T07 Object Selection
-S9-T08 Generation Configuration
-S9-T09 Generation
-S9-T10 Results
+S9-T01 DI Composition Root — Concluído C#
+S9-T02 Connection View — Concluído C#
+S9-T03 Test Connection — Concluído C#
+S9-T04 Read Metadata — Concluído C#
+S9-T05 Progress — Concluído C#
+S9-T06 Cancellation — Concluído C#
+S9-T07 Object Selection — Concluído C#
+S9-T08 Generation Configuration — Concluído C#
+S9-T09 Generation — Concluído C#
+S9-T10 Results — Concluído C#
 ```
+
+**Status:** Concluído no C#.
 
 ## 116. Sprint 10 — Delphi VCL Wizard
 
 ### Tasks
 
 ```text
-S10-T01 Bootstrap
-S10-T02 Connection Form
-S10-T03 Test Connection
-S10-T04 Metadata Task
-S10-T05 Object Selection
-S10-T06 Generation Configuration
-S10-T07 Generation Task
-S10-T08 Cancellation
-S10-T09 Result Form
+S10-T01 Bootstrap — Concluído Delphi
+S10-T02 Connection Form — Concluído Delphi
+S10-T03 Test Connection — Concluído Delphi
+S10-T04 Metadata Task — Concluído Delphi
+S10-T05 Object Selection — Concluído Delphi
+S10-T06 Generation Configuration — Concluído Delphi
+S10-T07 Generation Task — Concluído Delphi
+S10-T08 Cancellation — Concluído Delphi
+S10-T09 Result Form — Concluído Delphi
 ```
+
+O wizard Delphi usa FireDAC por meio de factory de conexão por provider.
+**Status:** Concluído no Delphi.
 
 ## 117. Sprint 11 — Integration Tests
 
