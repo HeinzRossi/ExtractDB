@@ -82,6 +82,7 @@ public sealed class SqlServerMetadataProviderIntegrationTests
                 MetadataProgressStage.ReadingColumns,
                 MetadataProgressStage.ReadingPrimaryKeys,
                 MetadataProgressStage.ReadingForeignKeys,
+                MetadataProgressStage.ReadingSequences,
                 MetadataProgressStage.ReadingViews,
                 MetadataProgressStage.ReadingProcedures,
                 MetadataProgressStage.ReadingTriggers,

@@ -799,14 +799,14 @@ Não criar `CompositeKeyAttribute`.
 Simples:
 
 ```delphi
-[Campo('ID_CLIENTE'), PK]
+[Campo('ID_CLIENTE', 'integer'), PK]
 ```
 
 Composta:
 
 ```delphi
-[Campo('ID_USUARIO'), PK]
-[Campo('ID_PERFIL'), PK]
+[Campo('ID_USUARIO', 'integer'), PK]
+[Campo('ID_PERFIL', 'integer'), PK]
 ```
 
 ## 32. FK Simples
@@ -824,12 +824,12 @@ public Cliente Cliente { get; set; } = null!;
 Delphi:
 
 ```delphi
-[Campo('ID_CLIENTE'), FK, NotNull]
+[Campo('ID_CLIENTE', 'integer'), FK, ForeignKey('ID_CLIENTE', 'FK_PEDIDO_CLIENTE', 'CLIENTE', 'ID_CLIENTE'), NotNull]
 property IdCliente: Integer
   read FIdCliente
   write FIdCliente;
 
-[BelongsTo('CLIENTE', 'ID_CLIENTE')]
+[BelongsTo('TCliente')]
 property Cliente: TCliente
   read FCliente
   write FCliente;
@@ -979,7 +979,7 @@ AutoInc
 Exemplo:
 
 ```delphi
-[Campo('ID_CLIENTE'), PK, AutoInc, NotNull]
+[Campo('ID_CLIENTE', 'integer'), PK, AutoInc, NotNull]
 ```
 
 ## 41. Sequence
@@ -1290,7 +1290,7 @@ private
 Propriedade:
 
 ```delphi
-[Campo('DOCUMENTO')]
+[Campo('DOCUMENTO', 'bytea')]
 property Documento: TStream
   read FDocumento
   write SetDocumento;
@@ -1385,6 +1385,8 @@ FK
 NotNull
 AutoInc
 BelongsTo
+Sequence
+ForeignKey
 ```
 
 Antes de criar atributos novos, verificar se SimpleORM já possui suporte.
@@ -1393,21 +1395,39 @@ Antes de criar atributos novos, verificar se SimpleORM já possui suporte.
 
 O atributo `Campo` deve carregar tamanho quando aplicável.
 
-Exemplo conceitual:
+Assinatura local confirmada:
+
+```text
+Campo(aName, Tipo, Tamanho = 0)
+PK(aName = '')
+Sequence(pNome)
+ForeignKey(pNomeForeignKey, pNomeConstraint, pTabelaReferencia, pColunaReferencia)
+```
+
+Exemplo:
 
 ```text
 VARCHAR(100)
-→ Campo(..., 100)
+→ Campo('NOME', 'varchar', 100)
+
+NUMERIC(18,2)
+→ Campo('VALOR', 'numeric', 18.2)
 ```
 
-Confirmar assinatura real antes da implementação.
+`Campo.Tipo` é sempre o tipo físico do banco vindo de `NativeType`. O tipo Delphi fica somente na propriedade:
+
+```delphi
+[Campo('VALOR', 'NUMERIC', 18.2)]
+property Valor: Currency
+  read FValor
+  write FValor;
+```
 
 ## 62. Atributos SimpleORM Adicionais
 
 Se não existirem, adicionar:
 
 ```text
-Sequence
 GeneratedByTrigger
 DatabaseDefault
 DatabaseComputed
@@ -1606,9 +1626,32 @@ Scripts/
 └── Triggers/
 ```
 
+## 77.1 Sequences
+
+Não gerar classes.
+
+Exportar como SQL independente:
+
+```text
+Scripts/
+└── Sequences/
+```
+
+Sequences/generators não devem depender de inferência obrigatória de coluna, pois nem todo banco ou schema expressa essa relação de forma padronizada.
+
+Como os scripts criam objetos novos, todas as sequences exportadas devem iniciar em zero:
+
+```sql
+CREATE SEQUENCE GEN_PEDIDO_ID START WITH 0;
+```
+
+Quando o provider expuser incremento, preservar `INCREMENT BY`.
+
 ## 78. SQL
 
 Preservar SQL nativo.
+
+Exceção: scripts de sequence são DDL normalizado de criação nova, com `START WITH 0`.
 
 Não:
 
@@ -1636,7 +1679,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ## 80. Estrutura de Saída Delphi
@@ -1652,7 +1696,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ## 81. Schema nas Pastas SQL
@@ -2165,31 +2210,31 @@ Criar foundations e contratos.
 **Prioridade:** Alta.
 **Status:** Concluído no C#.
 
-#### S1-T02 — Estrutura Delphi — Pendente
+#### S1-T02 — Estrutura Delphi — Concluído Delphi
 
 **Resultado esperado:** Estrutura por units/pastas criada.  
 **Aceite:** Projeto VCL compila.  
 **Prioridade:** Alta.
-**Status:** Pendente.
+**Status:** Concluído no Delphi.
 
-#### S1-T03 — Metadata — Parcial
+#### S1-T03 — Metadata — Concluído C# e Delphi
 
 Implementar todos os tipos normalizados.
 
 **Aceite:** C# e Delphi possuem representação conceitualmente equivalente.  
 **Dependência:** S1-T01/S1-T02.  
 **Prioridade:** Alta.
-**Status:** Concluído no C#; pendente no Delphi.
+**Status:** Concluído no C# e no Delphi.
 
-#### S1-T04 — CommonDbType — Concluído C#
+#### S1-T04 — CommonDbType — Concluído C# e Delphi
 
 Implementar enum.
 
 **Aceite:** Tipos previstos nesta documentação representáveis.  
 **Prioridade:** Alta.
-**Status:** Concluído no C#.
+**Status:** Concluído no C# e no Delphi.
 
-#### S1-T05 — Naming — Concluído C#
+#### S1-T05 — Naming — Concluído C# e Delphi
 
 Implementar:
 
@@ -2200,7 +2245,7 @@ Implementar:
 
 **Aceite:** Testes automatizados cobrindo todos os exemplos deste documento.  
 **Prioridade:** Alta.
-**Status:** Concluído no C#.
+**Status:** Concluído no C# e no Delphi.
 
 ## 108. Sprint 2 — Connection Infrastructure
 
@@ -2329,26 +2374,27 @@ Projeto de referência contendo os fontes gerados compila no .NET 10.
 
 ## 113. Sprint 7 — Delphi Generator
 
-**Status:** Deferido. Delphi não será implementado agora.
+**Status:** Concluído no Delphi.
 
 ### Tasks
 
 ```text
-S7-T01 DelphiTypeMapper
-S7-T02 DecimalMapper
-S7-T03 SimpleOrmAttributeWriter
-S7-T04 EntityGenerator
-S7-T05 RelationshipWriter
-S7-T06 EnumGenerator
-S7-T07 StreamGeneration
-S7-T08 StreamSetterGeneration
-S7-T09 DynamicUses
-S7-T10 FileWriter
+S7-T01 DelphiTypeMapper — Concluído Delphi
+S7-T02 DecimalMapper — Concluído Delphi
+S7-T03 SimpleOrmAttributeWriter — Concluído Delphi
+S7-T04 EntityGenerator — Concluído Delphi
+S7-T05 RelationshipWriter — Concluído Delphi
+S7-T06 EnumGenerator — Concluído Delphi
+S7-T07 StreamGeneration — Concluído Delphi
+S7-T08 StreamSetterGeneration — Concluído Delphi
+S7-T09 DynamicUses — Concluído Delphi
+S7-T10 FileWriter — Concluído Delphi
 ```
 
 ### Aceite
 
 Projeto de referência contendo os fontes gerados compila no Delphi 12 Athens.
+**Status:** Concluído no Delphi.
 
 ## 114. Sprint 8 — SQL Export
 
@@ -2391,16 +2437,19 @@ S9-T10 Results — Concluído C#
 ### Tasks
 
 ```text
-S10-T01 Bootstrap
-S10-T02 Connection Form
-S10-T03 Test Connection
-S10-T04 Metadata Task
-S10-T05 Object Selection
-S10-T06 Generation Configuration
-S10-T07 Generation Task
-S10-T08 Cancellation
-S10-T09 Result Form
+S10-T01 Bootstrap — Concluído Delphi
+S10-T02 Connection Form — Concluído Delphi
+S10-T03 Test Connection — Concluído Delphi
+S10-T04 Metadata Task — Concluído Delphi
+S10-T05 Object Selection — Concluído Delphi
+S10-T06 Generation Configuration — Concluído Delphi
+S10-T07 Generation Task — Concluído Delphi
+S10-T08 Cancellation — Concluído Delphi
+S10-T09 Result Form — Concluído Delphi
 ```
+
+O wizard Delphi usa FireDAC por meio de factory de conexão por provider.
+**Status:** Concluído no Delphi.
 
 ## 117. Sprint 11 — Integration Tests
 

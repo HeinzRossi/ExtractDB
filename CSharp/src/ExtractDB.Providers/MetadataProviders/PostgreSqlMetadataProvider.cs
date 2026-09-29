@@ -199,15 +199,7 @@ public sealed class PostgreSqlMetadataProvider : DatabaseMetadataProviderBase
             };
         }
 
-        var sequenceName = ExtractSequenceName(defaultExpression);
-
-        return sequenceName is null
-            ? new ValueGenerationMetadata { Strategy = ValueGenerationStrategy.None }
-            : new ValueGenerationMetadata
-            {
-                Strategy = ValueGenerationStrategy.Sequence,
-                SequenceName = sequenceName
-            };
+        return new ValueGenerationMetadata { Strategy = ValueGenerationStrategy.None };
     }
 
     protected override DbConnection CreateConnection(string connectionString)
@@ -433,7 +425,8 @@ public sealed class PostgreSqlMetadataProvider : DatabaseMetadataProviderBase
         return await QueryAsync(connection, sql, schema, reader => new SequenceMetadata
         {
             Schema = schema,
-            Name = reader.GetString(0)
+            Name = reader.GetString(0),
+            Sql = $"CREATE SEQUENCE {schema}.{reader.GetString(0)} START WITH 0;"
         }, cancellationToken);
     }
 

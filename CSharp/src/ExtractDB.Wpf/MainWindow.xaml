@@ -7,35 +7,105 @@
         Height="720"
         Width="1120">
     <Window.Resources>
+        <Color x:Key="AppBackgroundColor">#F4F6F8</Color>
+        <Color x:Key="PanelColor">#FCFDFE</Color>
+        <Color x:Key="SubtlePanelColor">#EEF2F5</Color>
+        <Color x:Key="BorderColor">#D7DEE7</Color>
+        <Color x:Key="TextColor">#202A34</Color>
+        <Color x:Key="MutedTextColor">#5C6875</Color>
+        <Color x:Key="AccentColor">#2563A6</Color>
+        <Color x:Key="AccentHoverColor">#1E527F</Color>
+        <Color x:Key="AccentSoftColor">#E6F0FA</Color>
+
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}" />
+        <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelColor}" />
+        <SolidColorBrush x:Key="SubtlePanelBrush" Color="{StaticResource SubtlePanelColor}" />
+        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+        <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}" />
+        <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+        <SolidColorBrush x:Key="AccentSoftBrush" Color="{StaticResource AccentSoftColor}" />
+
         <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+
+        <Style x:Key="CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,16,8" />
+        </Style>
+
         <Style TargetType="TextBox">
-            <Setter Property="MinHeight" Value="30" />
-            <Setter Property="Margin" Value="0,4,0,12" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+
         <Style TargetType="ComboBox">
-            <Setter Property="MinHeight" Value="30" />
-            <Setter Property="Margin" Value="0,4,0,12" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
         </Style>
+
         <Style TargetType="Button">
-            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="MinHeight" Value="34" />
             <Setter Property="MinWidth" Value="104" />
             <Setter Property="Margin" Value="0,0,8,0" />
-            <Setter Property="Padding" Value="12,4" />
+            <Setter Property="Padding" Value="14,5" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="#F7FAFC" />
+        </Style>
+
+        <Style x:Key="StepButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="MinWidth" Value="180" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Background" Value="{StaticResource SubtlePanelBrush}" />
+        </Style>
+
         <Style TargetType="GroupBox">
-            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Margin" Value="0,0,12,12" />
             <Setter Property="Padding" Value="12" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
         </Style>
     </Window.Resources>
 
-    <DockPanel Background="#F6F7F9">
+    <DockPanel Background="{StaticResource AppBackgroundBrush}">
         <Border DockPanel.Dock="Bottom"
-                Background="#FFFFFF"
-                BorderBrush="#D8DDE6"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,1,0,0"
-                Padding="16,10">
+                Padding="18,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -44,7 +114,9 @@
 
                 <StackPanel>
                     <TextBlock Text="{Binding StatusMessage}" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding ProgressMessage}" Foreground="#566274" Margin="0,4,0,0" />
+                    <TextBlock Text="{Binding ProgressMessage}"
+                               Style="{StaticResource CaptionTextStyle}"
+                               Margin="0,4,0,0" />
                 </StackPanel>
 
                 <Button Grid.Column="1"
@@ -55,32 +127,49 @@
 
         <Grid Margin="18">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="228" />
                 <ColumnDefinition Width="18" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Background="#FFFFFF"
-                    BorderBrush="#D8DDE6"
+            <Border Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    Padding="16">
-                <StackPanel>
-                    <TextBlock Text="ExtractDB" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,18" />
-                    <Button Content="1. Conexão" Command="{Binding GoToConnectionCommand}" Margin="0,0,0,8" />
-                    <Button Content="2. Seleção" Command="{Binding GoToSelectionCommand}" Margin="0,0,0,8" />
-                    <Button Content="3. Geração" Command="{Binding GoToConfigurationCommand}" Margin="0,0,0,8" />
-                    <TextBlock Text="Fluxo: conectar, ler metadata, selecionar objetos, gerar arquivos e revisar resultado."
-                               TextWrapping="Wrap"
-                               Foreground="#566274"
-                               Margin="0,16,0,0" />
-                </StackPanel>
+                    Padding="18">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="ExtractDB" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding CurrentStepTitle}"
+                                   Style="{StaticResource CaptionTextStyle}"
+                                   Margin="0,4,0,20" />
+                        <Button Content="1  Conexão"
+                                Command="{Binding GoToConnectionCommand}"
+                                Style="{StaticResource StepButtonStyle}" />
+                        <Button Content="2  Objetos"
+                                Command="{Binding GoToSelectionCommand}"
+                                Style="{StaticResource StepButtonStyle}" />
+                        <Button Content="3  Saída"
+                                Command="{Binding GoToConfigurationCommand}"
+                                Style="{StaticResource StepButtonStyle}" />
+                    </StackPanel>
+
+                    <Border DockPanel.Dock="Bottom"
+                            Background="{StaticResource AccentSoftBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="12">
+                        <TextBlock Text="Credenciais ficam só em memória."
+                                   TextWrapping="Wrap"
+                                   Foreground="{StaticResource MutedTextBrush}" />
+                    </Border>
+                </DockPanel>
             </Border>
 
             <Border Grid.Column="2"
-                    Background="#FFFFFF"
-                    BorderBrush="#D8DDE6"
+                    Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    Padding="22">
+                    Padding="24">
                 <Grid>
                     <Grid Visibility="{Binding IsConnectionStep, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid.RowDefinitions>
@@ -89,11 +178,16 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Conexão" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18" />
+                        <StackPanel Margin="0,0,0,22">
+                            <TextBlock Text="Conexão" FontSize="24" FontWeight="SemiBold" />
+                            <TextBlock Text="PostgreSQL, SQL Server ou Firebird"
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       Margin="0,5,0,0" />
+                        </StackPanel>
 
-                        <Grid Grid.Row="1" MaxWidth="520" HorizontalAlignment="Left">
+                        <Grid Grid.Row="1" MaxWidth="560" HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="160" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -105,37 +199,48 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Provider" />
+                            <TextBlock Grid.Row="0" Text="Provider" Style="{StaticResource FieldLabelStyle}" />
                             <ComboBox Grid.Row="0" Grid.Column="1"
                                       ItemsSource="{Binding Connection.ProviderOptions}"
                                       SelectedItem="{Binding Connection.Provider}" />
 
-                            <TextBlock Grid.Row="1" Text="Servidor" />
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Connection.Server, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="1" Text="Servidor" Style="{StaticResource FieldLabelStyle}" />
+                            <TextBox Grid.Row="1" Grid.Column="1"
+                                     Text="{Binding Connection.Server, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="2" Text="Porta" />
-                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Connection.Port, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="2" Text="Porta" Style="{StaticResource FieldLabelStyle}" />
+                            <TextBox Grid.Row="2" Grid.Column="1"
+                                     Text="{Binding Connection.Port, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="3" Text="Database" />
-                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Connection.Database, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="3" Text="Database" Style="{StaticResource FieldLabelStyle}" />
+                            <TextBox Grid.Row="3" Grid.Column="1"
+                                     Text="{Binding Connection.Database, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="4" Text="Usuário" />
-                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Connection.UserName, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="4" Text="Usuário" Style="{StaticResource FieldLabelStyle}" />
+                            <TextBox Grid.Row="4" Grid.Column="1"
+                                     Text="{Binding Connection.UserName, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="5" Text="Senha" />
-                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Connection.Password, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Grid.Row="5" Text="Senha" Style="{StaticResource FieldLabelStyle}" />
+                            <PasswordBox Grid.Row="5" Grid.Column="1"
+                                         PasswordChanged="PasswordBox_OnPasswordChanged" />
                         </Grid>
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Content="Testar conexão" Command="{Binding TestConnectionCommand}" />
-                            <Button Content="Ler metadata" Command="{Binding ReadMetadataCommand}" />
+                            <Button Content="Ler metadata"
+                                    Command="{Binding ReadMetadataCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
                         </StackPanel>
                     </Grid>
 
                     <Grid Visibility="{Binding IsMetadataReadingStep, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Lendo metadata" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                            <ProgressBar IsIndeterminate="True" Width="360" Height="18" Margin="0,18,0,0" />
+                            <TextBlock Text="Lendo metadata" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding ProgressMessage}"
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,8,0,0" />
+                            <ProgressBar IsIndeterminate="True" Width="360" Height="16" Margin="0,18,0,0" />
                         </StackPanel>
                     </Grid>
 
@@ -147,7 +252,12 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Seleção de objetos" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18" />
+                        <StackPanel Margin="0,0,0,18">
+                            <TextBlock Text="Seleção de objetos" FontSize="24" FontWeight="SemiBold" />
+                            <TextBlock Text="Enums acompanham as tabelas quando necessários."
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       Margin="0,5,0,0" />
+                        </StackPanel>
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
@@ -172,6 +282,9 @@
                                   ItemsSource="{Binding ObjectSelection.VisibleItems}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="Horizontal"
+                                  RowHeaderWidth="0"
                                   IsReadOnly="False">
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Header="Gerar" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="80" />
@@ -181,7 +294,9 @@
                         </DataGrid>
 
                         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-                            <Button Content="Configurar geração" Command="{Binding GoToConfigurationCommand}" />
+                            <Button Content="Configurar geração"
+                                    Command="{Binding GoToConfigurationCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
                         </StackPanel>
                     </Grid>
 
@@ -192,41 +307,60 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Configuração de geração" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18" />
+                        <StackPanel Margin="0,0,0,22">
+                            <TextBlock Text="Configuração de geração" FontSize="24" FontWeight="SemiBold" />
+                            <TextBlock Text="Models, enums e scripts serão sobrescritos na pasta escolhida."
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       Margin="0,5,0,0" />
+                        </StackPanel>
 
-                        <Grid Grid.Row="1" MaxWidth="680" HorizontalAlignment="Left">
+                        <Grid Grid.Row="1" MaxWidth="720" HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="160" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Namespace base" />
+                            <TextBlock Grid.Row="0" Text="Namespace base" Style="{StaticResource FieldLabelStyle}" />
                             <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                                      Text="{Binding GenerationConfiguration.NamespaceBase, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="1" Text="Pasta de saída" />
+                            <TextBlock Grid.Row="1" Text="Pasta de saída" Style="{StaticResource FieldLabelStyle}" />
                             <TextBox Grid.Row="1" Grid.Column="1"
                                      Text="{Binding GenerationConfiguration.OutputDirectory, UpdateSourceTrigger=PropertyChanged}" />
                             <Button Grid.Row="1" Grid.Column="2"
                                     Content="Escolher"
                                     Command="{Binding BrowseOutputDirectoryCommand}" />
+
+                            <TextBlock Grid.Row="2" Text="JSON de dados" Style="{StaticResource FieldLabelStyle}" />
+                            <TextBox Grid.Row="2" Grid.Column="1"
+                                     Text="{Binding GenerationConfiguration.DataExportConfigurationPath, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Grid.Row="2" Grid.Column="2"
+                                    Content="Escolher"
+                                    Command="{Binding BrowseDataExportConfigurationCommand}" />
                         </Grid>
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Content="Voltar" Command="{Binding GoToSelectionCommand}" />
-                            <Button Content="Gerar" Command="{Binding GenerateCommand}" />
+                            <Button Content="Gerar"
+                                    Command="{Binding GenerateCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}" />
                         </StackPanel>
                     </Grid>
 
                     <Grid Visibility="{Binding IsGenerationStep, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Gerando arquivos" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
-                            <ProgressBar IsIndeterminate="True" Width="360" Height="18" Margin="0,18,0,0" />
+                            <TextBlock Text="Gerando arquivos" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding ProgressMessage}"
+                                       Style="{StaticResource CaptionTextStyle}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,8,0,0" />
+                            <ProgressBar IsIndeterminate="True" Width="360" Height="16" Margin="0,18,0,0" />
                         </StackPanel>
                     </Grid>
 
@@ -237,7 +371,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Resultado" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18" />
+                        <TextBlock Text="Resultado" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,18" />
 
                         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,18">
                             <GroupBox Header="Success">
@@ -255,6 +389,9 @@
                                   ItemsSource="{Binding Result.Messages}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="Horizontal"
+                                  RowHeaderWidth="0"
                                   IsReadOnly="True">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="100" />

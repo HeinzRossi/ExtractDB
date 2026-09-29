@@ -6,6 +6,7 @@ public sealed class GenerationConfigurationViewModel : ObservableObject
 {
     private string namespaceBase = "ExtractDB.Generated";
     private string outputDirectory = string.Empty;
+    private string dataExportConfigurationPath = string.Empty;
 
     public string NamespaceBase
     {
@@ -17,5 +18,11 @@ public sealed class GenerationConfigurationViewModel : ObservableObject
     {
         get => outputDirectory;
         set => SetProperty(ref outputDirectory, value);
+    }
+
+    public string DataExportConfigurationPath
+    {
+        get => dataExportConfigurationPath;
+        set => SetProperty(ref dataExportConfigurationPath, value);
     }
 }

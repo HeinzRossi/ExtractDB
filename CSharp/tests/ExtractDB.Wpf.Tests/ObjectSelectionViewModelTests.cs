@@ -7,13 +7,13 @@ namespace ExtractDB.Wpf.Tests;
 public sealed class ObjectSelectionViewModelTests
 {
     [Fact]
-    public void Load_adds_selectable_tables_views_procedures_and_triggers()
+    public void Load_adds_selectable_tables_views_procedures_triggers_and_sequences()
     {
         var viewModel = new ObjectSelectionViewModel();
 
         viewModel.Load(CreateMetadata());
 
-        Assert.Equal(4, viewModel.Items.Count);
+        Assert.Equal(5, viewModel.Items.Count);
         Assert.All(viewModel.Items, item => Assert.True(item.IsSelected));
     }
 
@@ -92,6 +92,15 @@ public sealed class ObjectSelectionViewModelTests
                 {
                     Name = "tr_cliente",
                     Sql = "select 1"
+                }
+            ],
+            Sequences =
+            [
+                new SequenceMetadata
+                {
+                    Schema = "public",
+                    Name = "seq_cliente",
+                    Sql = "create sequence public.seq_cliente start with 0;"
                 }
             ]
         };

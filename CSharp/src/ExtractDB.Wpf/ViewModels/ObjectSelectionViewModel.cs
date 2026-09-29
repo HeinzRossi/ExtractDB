@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ExtractDB.Core.Metadata;
 using ExtractDB.Core.Types;
+using ExtractDB.Wpf.Services;
 
 namespace ExtractDB.Wpf.ViewModels;
 
@@ -18,7 +19,8 @@ public sealed class ObjectSelectionViewModel : ObservableObject
         nameof(DatabaseObjectType.Table),
         nameof(DatabaseObjectType.View),
         nameof(DatabaseObjectType.Procedure),
-        nameof(DatabaseObjectType.Trigger)
+        nameof(DatabaseObjectType.Trigger),
+        nameof(DatabaseObjectType.Sequence)
     ];
 
     public ObservableCollection<SelectableDatabaseObjectViewModel> Items { get; } = [];
@@ -60,24 +62,34 @@ public sealed class ObjectSelectionViewModel : ObservableObject
     {
         Items.Clear();
 
-        foreach (var table in metadata.Tables)
+        foreach (var table in metadata.Tables.Where(table =>
+                     SystemObjectFilter.IsUserObject(metadata.Provider, table.Schema, table.Name)))
         {
             Items.Add(new SelectableDatabaseObjectViewModel(DatabaseObjectType.Table, table.Schema, table.Name));
         }
 
-        foreach (var view in metadata.Views)
+        foreach (var view in metadata.Views.Where(view =>
+                     SystemObjectFilter.IsUserObject(metadata.Provider, view.Schema, view.Name)))
         {
             Items.Add(new SelectableDatabaseObjectViewModel(DatabaseObjectType.View, view.Schema, view.Name));
         }
 
-        foreach (var procedure in metadata.Procedures)
+        foreach (var procedure in metadata.Procedures.Where(procedure =>
+                     SystemObjectFilter.IsUserObject(metadata.Provider, procedure.Schema, procedure.Name)))
         {
             Items.Add(new SelectableDatabaseObjectViewModel(DatabaseObjectType.Procedure, procedure.Schema, procedure.Name));
         }
 
-        foreach (var trigger in metadata.Triggers)
+        foreach (var trigger in metadata.Triggers.Where(trigger =>
+                     SystemObjectFilter.IsUserObject(metadata.Provider, trigger.Schema, trigger.Name)))
         {
             Items.Add(new SelectableDatabaseObjectViewModel(DatabaseObjectType.Trigger, trigger.Schema, trigger.Name));
+        }
+
+        foreach (var sequence in metadata.Sequences.Where(sequence =>
+                     SystemObjectFilter.IsUserObject(metadata.Provider, sequence.Schema, sequence.Name)))
+        {
+            Items.Add(new SelectableDatabaseObjectViewModel(DatabaseObjectType.Sequence, sequence.Schema, sequence.Name));
         }
 
         OnPropertyChanged(nameof(VisibleItems));

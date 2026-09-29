@@ -267,29 +267,50 @@ Namespace:
 O Delphi utiliza atributos do SimpleORM.
 
 ```delphi
+uses
+  SimpleAttributes,
+  ExtractDB.Generators.Attributes.MetadataAttributes;
+
 [Tabela('CLIENTE')]
 TCliente = class
 private
   FIdCliente: Integer;
   FNome: string;
 published
-  [Campo('ID_CLIENTE'), PK, AutoInc, NotNull]
+  [Campo('ID_CLIENTE', 'integer'), PK, AutoInc, NotNull]
   property IdCliente: Integer
     read FIdCliente
     write FIdCliente;
 
-  [Campo('NOME'), NotNull]
+  [Campo('NOME', 'varchar', 100), NotNull]
   property Nome: string
     read FNome
     write FNome;
 end;
 ```
 
-Caso algum atributo necessário não exista no SimpleORM, poderá ser incorporado ao framework.
+O gerador usa a API local do SimpleORM em `SimpleAttributes.pas`:
+
+- `Campo(aName, Tipo, Tamanho = 0)`
+- `PK(aName = '')`
+- `Sequence(pNome)`
+- `ForeignKey(pNomeForeignKey, pNomeConstraint, pTabelaReferencia, pColunaReferencia)`
+
+Em `Campo`, `Tipo` e `Tamanho` representam o tipo físico do banco e vêm de `NativeType`, tamanho, precisão e escala do provider. O tipo da propriedade continua Delphi.
+
+```delphi
+[Campo('VALOR', 'NUMERIC', 18.2)]
+property Valor: Currency
+  read FValor
+  write FValor;
+```
+
+Para PostgreSQL, por exemplo, `numeric(18,2)` pode sair como `Campo('VALOR', 'numeric', 18.2)`; para Firebird, como `Campo('VALOR', 'NUMERIC', 18.2)`.
+
+Atributos sem equivalente no SimpleORM local ficam em uma unit própria do ExtractDB.
 
 Possíveis extensões:
 
-- `Sequence`
 - `GeneratedByTrigger`
 - `DatabaseDefault`
 - `DatabaseComputed`
@@ -319,7 +340,7 @@ private
   procedure SetDocumento(const Value: TStream);
 
 published
-  [Campo('DOCUMENTO')]
+  [Campo('DOCUMENTO', 'bytea')]
   property Documento: TStream
     read FDocumento
     write SetDocumento;
@@ -434,7 +455,7 @@ Um warning é exibido na interface.
 
 ## SQL gerado
 
-Views, Procedures e Triggers são exportados preservando o SQL nativo do banco.
+Views, Procedures e Triggers são exportados preservando o SQL nativo do banco. Sequences são exportadas como DDL de criação nova e sempre usam `START WITH 0`.
 
 Não são realizadas:
 
@@ -450,7 +471,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 Quando aplicável:
@@ -463,6 +485,12 @@ Scripts/
 ```
 
 No Firebird não é criada uma pasta artificial de schema.
+
+Exemplo de sequence exportada:
+
+```sql
+CREATE SEQUENCE GEN_PEDIDO_ID START WITH 0;
+```
 
 ---
 
@@ -485,7 +513,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ### Delphi
@@ -501,7 +530,8 @@ Output/
 └── Scripts/
     ├── Views/
     ├── Procedures/
-    └── Triggers/
+    ├── Triggers/
+    └── Sequences/
 ```
 
 ---
@@ -678,13 +708,13 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 
 ## Roadmap
 
-### Sprint 1 — Core — Parcial
+### Sprint 1 — Core — Concluído C# e Delphi
 - [x] estrutura C# da solução;
-- [ ] estrutura Delphi da solução;
-- [x] modelo normalizado C#;
-- [x] CommonDbType C#;
-- [x] naming C#;
-- [x] testes unitários iniciais C#.
+- [x] estrutura Delphi da solução;
+- [x] modelo normalizado C# e Delphi;
+- [x] CommonDbType C# e Delphi;
+- [x] naming C# e Delphi;
+- [x] testes unitários iniciais C# e Delphi.
 
 ### Sprint 2 — Connection Infrastructure — Concluído C#
 - [x] connection options C#;
@@ -749,15 +779,15 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] dynamic imports C#;
 - [x] file writer C#.
 
-### Sprint 7 — Delphi Generator — Deferido
-- type mapper;
-- decimal mapper;
-- SimpleORM attributes;
-- relationships;
-- enums;
-- streams;
-- dynamic uses;
-- file writer.
+### Sprint 7 — Delphi Generator — Concluído Delphi
+- [x] type mapper Delphi;
+- [x] decimal mapper Delphi;
+- [x] SimpleORM attributes Delphi;
+- [x] relationships Delphi;
+- [x] enums Delphi;
+- [x] streams Delphi;
+- [x] dynamic uses Delphi;
+- [x] file writer Delphi.
 
 ### Sprint 8 — SQL Export — Concluído C#
 - [x] views C#;
@@ -774,13 +804,17 @@ Preferir transformações determinísticas e manter I/O nas bordas da aplicaçã
 - [x] geração C#;
 - [x] resultado C#.
 
-### Sprint 10 — Delphi VCL Wizard
-- bootstrap;
-- forms;
-- TTask;
-- cancelamento;
-- geração;
-- resultado.
+### Sprint 10 — Delphi VCL Wizard — Concluído Delphi
+- [x] bootstrap Delphi;
+- [x] FireDAC connection factory Delphi;
+- [x] connection form Delphi;
+- [x] test connection Delphi;
+- [x] metadata task Delphi;
+- [x] object selection Delphi;
+- [x] generation configuration Delphi;
+- [x] generation task Delphi;
+- [x] cancellation Delphi;
+- [x] result form Delphi.
 
 ### Sprint 11 — Integration Tests
 - containers;

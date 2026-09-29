@@ -14,6 +14,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private readonly IMetadataProviderFactory providerFactory;
     private readonly ICSharpGenerationService generationService;
     private readonly IFolderPickerService folderPickerService;
+    private readonly IFilePickerService filePickerService;
     private WizardStep currentStep = WizardStep.Connection;
     private bool isBusy;
     private string statusMessage = "Informe os dados de conexão.";
@@ -24,17 +25,20 @@ public sealed class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(
         IMetadataProviderFactory providerFactory,
         ICSharpGenerationService generationService,
-        IFolderPickerService folderPickerService)
+        IFolderPickerService folderPickerService,
+        IFilePickerService filePickerService)
     {
         this.providerFactory = providerFactory;
         this.generationService = generationService;
         this.folderPickerService = folderPickerService;
+        this.filePickerService = filePickerService;
 
         TestConnectionCommand = new AsyncRelayCommand(TestConnectionAsync, CanUseConnection);
         ReadMetadataCommand = new AsyncRelayCommand(ReadMetadataAsync, CanUseConnection);
         GenerateCommand = new AsyncRelayCommand(GenerateAsync, CanGenerate);
         CancelCommand = new RelayCommand(Cancel, () => IsBusy);
         BrowseOutputDirectoryCommand = new RelayCommand(BrowseOutputDirectory);
+        BrowseDataExportConfigurationCommand = new RelayCommand(BrowseDataExportConfiguration);
         SelectAllCommand = new RelayCommand(SelectAll);
         UnselectAllCommand = new RelayCommand(UnselectAll);
         InvertSelectionCommand = new RelayCommand(InvertSelection);
@@ -65,6 +69,8 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public IRelayCommand BrowseOutputDirectoryCommand { get; }
 
+    public IRelayCommand BrowseDataExportConfigurationCommand { get; }
+
     public IRelayCommand SelectAllCommand { get; }
 
     public IRelayCommand UnselectAllCommand { get; }
@@ -90,6 +96,7 @@ public sealed class MainWindowViewModel : ObservableObject
                 OnPropertyChanged(nameof(IsGenerationConfigurationStep));
                 OnPropertyChanged(nameof(IsGenerationStep));
                 OnPropertyChanged(nameof(IsResultStep));
+                OnPropertyChanged(nameof(CurrentStepTitle));
             }
         }
     }
@@ -130,6 +137,18 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public bool IsResultStep => CurrentStep == WizardStep.Result;
 
+    public string CurrentStepTitle
+        => CurrentStep switch
+        {
+            WizardStep.Connection => "Conexão",
+            WizardStep.MetadataReading => "Leitura de metadata",
+            WizardStep.ObjectSelection => "Seleção de objetos",
+            WizardStep.GenerationConfiguration => "Configuração de geração",
+            WizardStep.Generation => "Geração",
+            WizardStep.Result => "Resultado",
+            _ => CurrentStep.ToString()
+        };
+
     public async Task TestConnectionAsync()
     {
         await RunBusyAsync(WizardStep.Connection, async cancellationToken =>
@@ -162,7 +181,7 @@ public sealed class MainWindowViewModel : ObservableObject
             return;
         }
 
-        await RunBusyAsync(WizardStep.Generation, cancellationToken =>
+        await RunBusyAsync(WizardStep.Generation, async cancellationToken =>
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -171,20 +190,25 @@ public sealed class MainWindowViewModel : ObservableObject
                 .Select(item => new SelectedObject(item.ObjectType, item.Schema, item.Name))
                 .ToArray();
 
-            var result = generationService.Generate(
+            var result = await generationService.GenerateAsync(
                 metadata,
                 new GenerationRequest
                 {
+                    Provider = metadata.Provider,
+                    ConnectionOptions = Connection.ToConnectionOptions(),
                     NamespaceBase = GenerationConfiguration.NamespaceBase,
                     OutputDirectory = GenerationConfiguration.OutputDirectory,
+                    DataExportConfigurationPath = string.IsNullOrWhiteSpace(GenerationConfiguration.DataExportConfigurationPath)
+                        ? null
+                        : GenerationConfiguration.DataExportConfigurationPath,
                     SelectedObjects = selectedObjects
-                });
+                },
+                cancellationToken);
 
             Result.Load(result);
             StatusMessage = "Geração concluída.";
             CurrentStep = WizardStep.Result;
 
-            return Task.CompletedTask;
         });
     }
 
@@ -237,6 +261,16 @@ public sealed class MainWindowViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(folder))
         {
             GenerationConfiguration.OutputDirectory = folder;
+        }
+    }
+
+    private void BrowseDataExportConfiguration()
+    {
+        var file = filePickerService.PickJsonFile(GenerationConfiguration.DataExportConfigurationPath);
+
+        if (!string.IsNullOrWhiteSpace(file))
+        {
+            GenerationConfiguration.DataExportConfigurationPath = file;
         }
     }
 

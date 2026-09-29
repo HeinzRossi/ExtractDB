@@ -204,37 +204,6 @@ public sealed class FirebirdMetadataProvider : DatabaseMetadataProviderBase
             };
         }
 
-        var defaultSequenceName = ExtractSequenceName(defaultExpression);
-
-        if (defaultSequenceName is not null)
-        {
-            return new ValueGenerationMetadata
-            {
-                Strategy = ValueGenerationStrategy.Sequence,
-                SequenceName = defaultSequenceName
-            };
-        }
-
-        if (columnName is null || triggers is null)
-        {
-            return new ValueGenerationMetadata { Strategy = ValueGenerationStrategy.None };
-        }
-
-        foreach (var trigger in triggers)
-        {
-            var sequenceName = DetectTriggerSequence(columnName, trigger.Sql);
-
-            if (sequenceName is not null)
-            {
-                return new ValueGenerationMetadata
-                {
-                    Strategy = ValueGenerationStrategy.TriggerSequence,
-                    SequenceName = sequenceName,
-                    TriggerName = trigger.TriggerName
-                };
-            }
-        }
-
         return new ValueGenerationMetadata { Strategy = ValueGenerationStrategy.None };
     }
 
@@ -469,7 +438,8 @@ public sealed class FirebirdMetadataProvider : DatabaseMetadataProviderBase
         return await QueryAsync(connection, sql, reader => new SequenceMetadata
         {
             Schema = null,
-            Name = TrimIdentifier(reader.GetString(0))
+            Name = TrimIdentifier(reader.GetString(0)),
+            Sql = $"CREATE SEQUENCE {TrimIdentifier(reader.GetString(0))} START WITH 0;"
         }, cancellationToken);
     }
 
@@ -562,24 +532,12 @@ public sealed class FirebirdMetadataProvider : DatabaseMetadataProviderBase
         PrimaryKeyMetadata? primaryKey,
         IReadOnlyList<FirebirdTriggerInfo> triggers)
     {
-        var tableTriggers = triggers
-            .Where(trigger => string.Equals(trigger.TableName, tableName, StringComparison.OrdinalIgnoreCase))
-            .Select(trigger => (trigger.Metadata.Name, trigger.Metadata.Sql))
-            .ToArray();
-
         return columns
             .Select(column =>
-            {
-                var valueGeneration = column.ValueGeneration?.Strategy == ValueGenerationStrategy.None
-                    ? BuildValueGeneration(false, null, column.Name, tableTriggers)
-                    : column.ValueGeneration;
-
-                return column with
+                column with
                 {
-                    IsPrimaryKey = primaryKey?.Columns.Contains(column.Name) == true,
-                    ValueGeneration = valueGeneration
-                };
-            })
+                    IsPrimaryKey = primaryKey?.Columns.Contains(column.Name) == true
+                })
             .ToArray();
     }
 

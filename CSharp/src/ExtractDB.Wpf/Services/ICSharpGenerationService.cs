@@ -5,7 +5,8 @@ namespace ExtractDB.Wpf.Services;
 
 public interface ICSharpGenerationService
 {
-    GenerationResult Generate(
+    Task<GenerationResult> GenerateAsync(
         DatabaseMetadata metadata,
-        GenerationRequest request);
+        GenerationRequest request,
+        CancellationToken cancellationToken);
 }

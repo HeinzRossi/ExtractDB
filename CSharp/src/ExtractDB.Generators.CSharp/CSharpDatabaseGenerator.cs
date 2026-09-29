@@ -71,6 +71,7 @@ public sealed class CSharpDatabaseGenerator
         successCount += GenerateScripts(database.Views, context, "Views", DatabaseObjectType.View, messages);
         successCount += GenerateScripts(database.Procedures, context, "Procedures", DatabaseObjectType.Procedure, messages);
         successCount += GenerateScripts(database.Triggers, context, "Triggers", DatabaseObjectType.Trigger, messages);
+        successCount += GenerateScripts(database.Sequences, context, "Sequences", DatabaseObjectType.Sequence, messages);
         successCount += GenerateMetadataAttributes(database, context, messages);
 
         return new GenerationResult
@@ -326,6 +327,7 @@ public sealed class CSharpDatabaseGenerator
             ViewMetadata view => (view.Schema, view.Name, view.Sql),
             ProcedureMetadata procedure => (procedure.Schema, procedure.Name, procedure.Sql),
             TriggerMetadata trigger => (trigger.Schema, trigger.Name, trigger.Sql),
+            SequenceMetadata sequence => (sequence.Schema, sequence.Name, sequence.Sql),
             _ => throw new InvalidOperationException($"Unsupported SQL object type {typeof(T).Name}.")
         };
 

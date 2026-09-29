@@ -76,13 +76,13 @@ public sealed class PostgreSqlMetadataProviderMappingTests
     }
 
     [Fact]
-    public void BuildValueGeneration_detects_sequence_default()
+    public void BuildValueGeneration_does_not_bind_sequence_default_to_column()
     {
         var valueGeneration = PostgreSqlMetadataProvider.BuildValueGeneration(
             null,
             "nextval('extractdb_sprint3.seq_codigo'::regclass)");
 
-        Assert.Equal(ValueGenerationStrategy.Sequence, valueGeneration.Strategy);
-        Assert.Equal("seq_codigo", valueGeneration.SequenceName);
+        Assert.Equal(ValueGenerationStrategy.None, valueGeneration.Strategy);
+        Assert.Null(valueGeneration.SequenceName);
     }
 }

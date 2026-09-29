@@ -64,6 +64,14 @@ project.fragment.lock.json
 artifacts/
 artifacts/firebird-matrix/
 
+# Delphi build and IDE-local artifacts
+*.dcu
+*.exe
+*.dsk
+*.identcache
+*.dproj.local
+*.~*
+
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 

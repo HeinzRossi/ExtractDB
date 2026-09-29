@@ -68,16 +68,16 @@ public sealed class FirebirdMetadataProviderMappingTests
     }
 
     [Fact]
-    public void BuildValueGeneration_detects_sequence_default()
+    public void BuildValueGeneration_does_not_bind_sequence_default_to_column()
     {
         var valueGeneration = FirebirdMetadataProvider.BuildValueGeneration(false, "next value for GEN_CODIGO");
 
-        Assert.Equal(ValueGenerationStrategy.Sequence, valueGeneration.Strategy);
-        Assert.Equal("GEN_CODIGO", valueGeneration.SequenceName);
+        Assert.Equal(ValueGenerationStrategy.None, valueGeneration.Strategy);
+        Assert.Null(valueGeneration.SequenceName);
     }
 
     [Fact]
-    public void BuildValueGeneration_detects_trigger_sequence_when_column_assignment_is_explicit()
+    public void BuildValueGeneration_does_not_bind_trigger_sequence_to_column()
     {
         var valueGeneration = FirebirdMetadataProvider.BuildValueGeneration(
             false,
@@ -85,8 +85,8 @@ public sealed class FirebirdMetadataProviderMappingTests
             "CODIGO",
             [("TR_CLIENTE_BI", "new.CODIGO = gen_id(GEN_CODIGO, 1);")]);
 
-        Assert.Equal(ValueGenerationStrategy.TriggerSequence, valueGeneration.Strategy);
-        Assert.Equal("GEN_CODIGO", valueGeneration.SequenceName);
-        Assert.Equal("TR_CLIENTE_BI", valueGeneration.TriggerName);
+        Assert.Equal(ValueGenerationStrategy.None, valueGeneration.Strategy);
+        Assert.Null(valueGeneration.SequenceName);
+        Assert.Null(valueGeneration.TriggerName);
     }
 }

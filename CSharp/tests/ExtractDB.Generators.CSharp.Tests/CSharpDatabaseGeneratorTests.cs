@@ -31,6 +31,7 @@ public sealed class CSharpDatabaseGeneratorTests
         Assert.True(File.Exists(Path.Combine(directory.Path, "Scripts", "Views", "public", "vw_cliente.sql")));
         Assert.True(File.Exists(Path.Combine(directory.Path, "Scripts", "Procedures", "public", "sp_cliente.sql")));
         Assert.True(File.Exists(Path.Combine(directory.Path, "Scripts", "Triggers", "tr_cliente.sql")));
+        Assert.True(File.Exists(Path.Combine(directory.Path, "Scripts", "Sequences", "public", "seq_cliente.sql")));
     }
 
     [Fact]
@@ -79,12 +80,13 @@ public sealed class CSharpDatabaseGeneratorTests
     }
 
     [Fact]
-    public void Generate_exports_view_procedure_and_trigger_sql_to_expected_schema_folders()
+    public void Generate_exports_view_procedure_trigger_and_sequence_sql_to_expected_schema_folders()
     {
         using var directory = TempDirectory.Create();
         const string viewSql = "create view public.vw_cliente as\r\nselect * from public.cliente;";
         const string procedureSql = "create procedure public.sp_cliente()\r\nlanguage sql\r\nas $$ select 1; $$;";
         const string triggerSql = "create trigger tr_cliente\r\nbefore insert on cliente\r\nexecute function fn_cliente();";
+        const string sequenceSql = "create sequence public.seq_cliente start with 0;";
         var database = new DatabaseMetadata
         {
             Provider = DatabaseProvider.PostgreSql,
@@ -115,6 +117,15 @@ public sealed class CSharpDatabaseGeneratorTests
                     Name = "tr_cliente",
                     Sql = triggerSql
                 }
+            ],
+            Sequences =
+            [
+                new SequenceMetadata
+                {
+                    Schema = "public",
+                    Name = "seq_cliente",
+                    Sql = sequenceSql
+                }
             ]
         };
 
@@ -130,6 +141,9 @@ public sealed class CSharpDatabaseGeneratorTests
         Assert.Equal(
             triggerSql,
             File.ReadAllText(Path.Combine(directory.Path, "Scripts", "Triggers", "tr_cliente.sql")));
+        Assert.Equal(
+            sequenceSql,
+            File.ReadAllText(Path.Combine(directory.Path, "Scripts", "Sequences", "public", "seq_cliente.sql")));
     }
 
     [Fact]
@@ -326,6 +340,15 @@ public sealed class CSharpDatabaseGeneratorTests
                 {
                     Name = "tr_cliente",
                     Sql = "begin end"
+                }
+            ],
+            Sequences =
+            [
+                new SequenceMetadata
+                {
+                    Schema = "public",
+                    Name = "seq_cliente",
+                    Sql = "create sequence public.seq_cliente start with 0;"
                 }
             ],
             Enums =

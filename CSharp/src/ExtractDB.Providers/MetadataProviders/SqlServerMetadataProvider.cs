@@ -81,6 +81,13 @@ public sealed class SqlServerMetadataProvider : DatabaseMetadataProviderBase
 
         progress?.Report(new MetadataProgress
         {
+            Stage = MetadataProgressStage.ReadingSequences,
+            Message = "Reading SQL Server sequences."
+        });
+        var sequences = await ReadSequencesAsync(connection, schema, cancellationToken);
+
+        progress?.Report(new MetadataProgress
+        {
             Stage = MetadataProgressStage.ReadingViews,
             Message = "Reading SQL Server views."
         });
@@ -123,7 +130,8 @@ public sealed class SqlServerMetadataProvider : DatabaseMetadataProviderBase
                 .ToArray(),
             Views = views,
             Procedures = procedures,
-            Triggers = triggers
+            Triggers = triggers,
+            Sequences = sequences
         };
     }
 
@@ -410,6 +418,38 @@ public sealed class SqlServerMetadataProvider : DatabaseMetadataProviderBase
             Schema = schema,
             Name = reader.GetString(0),
             Sql = GetNullableString(reader, 1) ?? string.Empty
+        }, cancellationToken);
+    }
+
+    private static async Task<IReadOnlyList<SequenceMetadata>> ReadSequencesAsync(
+        SqlConnection connection,
+        string schema,
+        CancellationToken cancellationToken)
+    {
+        const string sql = """
+            select
+                schema_info.name,
+                sequence_info.name,
+                type_info.name,
+                sequence_info.increment
+            from sys.sequences sequence_info
+            join sys.schemas schema_info on schema_info.schema_id = sequence_info.schema_id
+            join sys.types type_info on type_info.user_type_id = sequence_info.user_type_id
+            where schema_info.name = @schema
+            order by sequence_info.name
+            """;
+
+        return await QueryAsync(connection, sql, schema, reader =>
+        {
+            var sequenceSchema = reader.GetString(0);
+            var sequenceName = reader.GetString(1);
+
+            return new SequenceMetadata
+            {
+                Schema = sequenceSchema,
+                Name = sequenceName,
+                Sql = $"CREATE SEQUENCE [{sequenceSchema}].[{sequenceName}] AS {reader.GetString(2)} START WITH 0 INCREMENT BY {reader.GetValue(3)};"
+            };
         }, cancellationToken);
     }
 

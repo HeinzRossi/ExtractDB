@@ -31,7 +31,9 @@ public sealed class PostgreSqlMetadataProviderIntegrationTests
         Assert.Equal("public", metadata.DefaultSchema);
         Assert.Contains(metadata.Tables, table => table.Name == "cliente");
         Assert.Contains(metadata.Tables, table => table.Name == "tabela_sem_pk" && table.PrimaryKey is null);
-        Assert.Contains(metadata.Sequences, sequence => sequence.Name == "seq_codigo");
+        Assert.Contains(metadata.Sequences, sequence =>
+            sequence.Name == "seq_codigo"
+            && sequence.Sql.Contains("CREATE SEQUENCE public.seq_codigo START WITH 0", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(metadata.Views, view => view.Name == "vw_cliente");
         Assert.Contains(metadata.Procedures, procedure => procedure.Name == "fn_cliente_nome");
         Assert.Contains(metadata.Triggers, trigger => trigger.Name == "tr_cliente_bu");
@@ -65,8 +67,8 @@ public sealed class PostgreSqlMetadataProviderIntegrationTests
             && fk.IsNullable);
         Assert.Contains(pedido.Columns, column =>
             column.Name == "id_pedido"
-            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.Sequence
-            && column.ValueGeneration.SequenceName == "seq_codigo");
+            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.None
+            && column.DefaultValue?.Kind == DefaultValueKind.Sequence);
 
         var loteItem = metadata.Tables.Single(table => table.Name == "lote_item");
         Assert.Contains(loteItem.ForeignKeys, fk =>

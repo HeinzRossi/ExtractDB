@@ -18,6 +18,7 @@ public sealed class MainWindowViewModelTests
         await viewModel.ReadMetadataAsync();
 
         Assert.Equal(WizardStep.ObjectSelection, viewModel.CurrentStep);
+        Assert.Equal("Seleção de objetos", viewModel.CurrentStepTitle);
         Assert.False(viewModel.IsBusy);
         Assert.Equal(2, viewModel.ObjectSelection.Items.Count);
         Assert.Contains("Metadata lido", viewModel.StatusMessage);
@@ -100,7 +101,8 @@ public sealed class MainWindowViewModelTests
         => new(
             new FakeMetadataProviderFactory(provider),
             generationService ?? new FakeGenerationService(),
-            new FakeFolderPickerService());
+            new FakeFolderPickerService(),
+            new FakeFilePickerService());
 
     private static void FillConnection(ConnectionViewModel connection)
     {
@@ -182,19 +184,20 @@ public sealed class MainWindowViewModelTests
     {
         public GenerationRequest? Request { get; private set; }
 
-        public GenerationResult Generate(
+        public Task<GenerationResult> GenerateAsync(
             DatabaseMetadata metadata,
-            GenerationRequest request)
+            GenerationRequest request,
+            CancellationToken cancellationToken)
         {
             Request = request;
 
-            return new GenerationResult
+            return Task.FromResult(new GenerationResult
             {
                 SuccessCount = 1,
                 WarningCount = 0,
                 ErrorCount = 0,
                 Messages = []
-            };
+            });
         }
     }
 
@@ -202,5 +205,11 @@ public sealed class MainWindowViewModelTests
     {
         public string? PickFolder(string? initialDirectory)
             => initialDirectory;
+    }
+
+    private sealed class FakeFilePickerService : IFilePickerService
+    {
+        public string? PickJsonFile(string? initialFile)
+            => initialFile;
     }
 }

@@ -31,7 +31,9 @@ public sealed class FirebirdMetadataProviderIntegrationTests
         Assert.Null(metadata.DefaultSchema);
         Assert.Contains(metadata.Tables, table => table.Name == "CLIENTE");
         Assert.Contains(metadata.Tables, table => table.Name == "TABELA_SEM_PK" && table.PrimaryKey is null);
-        Assert.Contains(metadata.Sequences, sequence => sequence.Name == "GEN_CODIGO");
+        Assert.Contains(metadata.Sequences, sequence =>
+            sequence.Name == "GEN_CODIGO"
+            && sequence.Sql.Contains("CREATE SEQUENCE GEN_CODIGO START WITH 0", StringComparison.OrdinalIgnoreCase));
         Assert.Contains(metadata.Views, view => view.Name == "VW_CLIENTE");
         Assert.Contains(metadata.Procedures, procedure => procedure.Name == "SP_CLIENTE_NOME");
         Assert.Contains(metadata.Triggers, trigger => trigger.Name == "TR_CLIENTE_BI");
@@ -59,9 +61,7 @@ public sealed class FirebirdMetadataProviderIntegrationTests
         var clienteLegado = metadata.Tables.Single(table => table.Name == "CLIENTE_LEGADO");
         Assert.Contains(clienteLegado.Columns, column =>
             column.Name == "CODIGO"
-            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.TriggerSequence
-            && column.ValueGeneration.SequenceName == "GEN_CODIGO"
-            && column.ValueGeneration.TriggerName == "TR_CLIENTE_BI");
+            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.None);
 
         var pedido = metadata.Tables.Single(table => table.Name == "PEDIDO");
         Assert.Contains(pedido.ForeignKeys, fk =>
@@ -74,8 +74,8 @@ public sealed class FirebirdMetadataProviderIntegrationTests
             && fk.IsNullable);
         Assert.Contains(pedido.Columns, column =>
             column.Name == "ID_PEDIDO"
-            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.Sequence
-            && column.ValueGeneration.SequenceName == "GEN_CODIGO");
+            && column.ValueGeneration?.Strategy == ValueGenerationStrategy.None
+            && column.DefaultValue?.Kind == DefaultValueKind.Sequence);
 
         var loteItem = metadata.Tables.Single(table => table.Name == "LOTE_ITEM");
         Assert.Contains(loteItem.ForeignKeys, fk =>
